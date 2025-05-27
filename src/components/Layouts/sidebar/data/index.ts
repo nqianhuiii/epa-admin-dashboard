@@ -15,6 +15,24 @@ export const NAV_DATA = [
         ],
       },
       {
+        title: "Users",
+        url: "/users",
+        icon: Icons.UsersIcon,
+        // items: [
+        //   {
+        //     title: "Tables",
+        //     url: "/tables",
+        //   },
+        // ],
+        items: [],
+      },
+      {
+        title: "Forums",
+        url: "/forums",
+        icon: Icons.ForumIcon,
+        items: [],
+      },
+      {
         title: "Calendar",
         url: "/calendar",
         icon: Icons.Calendar,
@@ -39,18 +57,6 @@ export const NAV_DATA = [
             url: "/forms/form-layout",
           },
         ],
-      },
-      {
-        title: "Users",
-        url: "/users",
-        icon: Icons.User,
-        // items: [
-        //   {
-        //     title: "Tables",
-        //     url: "/tables",
-        //   },
-        // ],
-        items: [],
       },
       {
         title: "Pages",
