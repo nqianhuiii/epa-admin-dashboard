@@ -13,6 +13,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
+    "firebase": "^11.8.1",
     "flatpickr": "^4.6.13",
     "jsvectormap": "^1.6.0",
     "next": "15.1.6",
@@ -21,7 +22,8 @@
     "react": "19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-dom": "19.0.0",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@types/node": "^22",

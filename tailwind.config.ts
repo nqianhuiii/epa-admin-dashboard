@@ -374,6 +374,9 @@ const config: Config = {
         line1: "line 10s infinite linear",
         line2: "line-revert 8s infinite linear",
         line3: "line 7s infinite linear",
+      }, 
+      transitionDuration: {
+        3000: '3000ms',
       },
     },
   },

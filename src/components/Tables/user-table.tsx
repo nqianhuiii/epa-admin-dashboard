@@ -12,6 +12,7 @@ import { DownloadIcon, PreviewIcon } from "./icons";
 import Image from "next/image";
 
 import { AppUser } from "@/services/userSercvice";
+import { DeleteUserForm } from "../deleteUserForm";
 
 export async function UserTable({users}: {users: AppUser[]}) {
 
@@ -65,15 +66,16 @@ export async function UserTable({users}: {users: AppUser[]}) {
                     <PreviewIcon />
                   </button>
 
-                  <button className="hover:text-primary">
-                    <span className="sr-only">Delete Invoice</span>
-                    <TrashIcon />
-                  </button>
+                  <DeleteUserForm
+                    userId={item.id}
+                    userName={item.fullName}
+                  />
 
-                  <button className="hover:text-primary">
+                  {/* edit ?  */}
+                  {/* <button className="hover:text-primary">
                     <span className="sr-only">Download Invoice</span>
                     <DownloadIcon />
-                  </button>
+                  </button> */}
                 </div>
               </TableCell>
             </TableRow>
