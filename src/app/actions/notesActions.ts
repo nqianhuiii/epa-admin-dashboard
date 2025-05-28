@@ -2,21 +2,21 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { uploadTextbookToCloudinary } from "@/services/cloudinaryServer";
-import { TextbookService } from "@/services/textbookService";
-import { TextbookData } from "@/types/types";
+import { uploadNotesToCloudinary } from "@/services/cloudinaryServer";
+import { NotesService } from '@/services/notesService';
+import { NotesData } from "@/types/types";
 
 
-export async function getTextbooks(): Promise<TextbookData[]> {
+export async function getNotes(): Promise<NotesData[]> {
   try {
-    return await TextbookService.getAll();
+    return await NotesService.getAll();
   } catch (error) {
-    console.error('Failed to fetch textbooks:', error);
+    console.error('Failed to fetch notes:', error);
     return [];
   }
 }
 
-export async function uploadTextbookAction(formData: FormData) {
+export async function uploadNotesAction(formData: FormData) {
   try {
     const file = formData.get('file') as File;
     const title = formData.get('title') as string;
@@ -36,10 +36,10 @@ export async function uploadTextbookAction(formData: FormData) {
     }
 
     // Upload to Cloudinary
-    const pdfUrl = await uploadTextbookToCloudinary(file);
+    const pdfUrl = await uploadNotesToCloudinary(file);
 
     // Save to Firestore using service
-    const textbookData = {
+    const notesData = {
       title,
       pdfUrl,
       fileName: file.name,
@@ -47,10 +47,10 @@ export async function uploadTextbookAction(formData: FormData) {
       uploadedAt: new Date(),
     };
 
-    await TextbookService.create(textbookData);
+    await NotesService.create(notesData);
 
     // Revalidate the page to show new data
-    revalidatePath('/textbook');
+    revalidatePath('/notes');
 
     return { success: true };
   } catch (error) {
@@ -59,16 +59,16 @@ export async function uploadTextbookAction(formData: FormData) {
   }
 }
 
-export async function deleteTextbookAction(textbookId: string) {
+export async function deleteNotesAction(notesId: string) {
   try {
-    await TextbookService.delete(textbookId);
+    await NotesService.delete(notesId);
 
     // Revalidate the page to show updated data
-    revalidatePath('/textbook');
+    revalidatePath('/notes');
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to delete textbook:', error);
-    return { success: false, error: 'Failed to delete textbook' };
+    console.error('Failed to delete notes:', error);
+    return { success: false, error: 'Failed to delete notes' };
   }
 }

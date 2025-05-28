@@ -50,12 +50,6 @@ export const NAV_DATA = [
 
           },
           {
-            title: "Exercise",
-            url: "/materials/form-exercise",
-            icon: Icons.ExerciseIcon,
-
-          },
-          {
             title: "Past Year Question",
             url: "/materials/form-pastYear",
             icon: Icons.PastYearIcon,
