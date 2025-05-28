@@ -14,7 +14,7 @@ import { PreviewIcon } from "./icons";
 import { TrashIcon } from "@/assets/icons";
 import { AppPost } from "@/services/forumService";
 import { useState } from "react";
-import PostModal from "../postModal";
+import PostModal from "../PostModal";
 
 export function ForumTable({posts}: {posts: AppPost[]}) {
   const [openModal, setOpenModal] = useState(false);

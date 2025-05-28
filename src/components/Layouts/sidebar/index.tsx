@@ -94,27 +94,30 @@ export function Sidebar() {
                 </h2>
 
                 <nav role="navigation" aria-label={section.label}>
-                  <ul className="space-y-2">
+                  <ul className="space-y-1">
                     {section.items.map((item) => (
-                      <li key={item.title}>
+                      <li key={item.title} className="relative">
                         {item.items.length ? (
-                          <div>
+                          <div className="w-full">
+                            {/* Parent Menu Item */}
                             <MenuItem
                               isActive={item.items.some(
                                 ({ url }) => url === pathname,
                               )}
                               onClick={() => toggleExpanded(item.title)}
+                              className="w-full justify-between"
                             >
-                              <item.icon
-                                className="size-6 shrink-0"
-                                aria-hidden="true"
-                              />
-
-                              <span>{item.title}</span>
+                              <div className="flex items-center gap-3">
+                                <item.icon
+                                  className="size-6 shrink-0"
+                                  aria-hidden="true"
+                                />
+                                <span>{item.title}</span>
+                              </div>
 
                               <ChevronUp
                                 className={cn(
-                                  "ml-auto rotate-180 transition-transform duration-200",
+                                  "size-4 rotate-180 transition-transform duration-200 shrink-0",
                                   expandedItems.includes(item.title) &&
                                     "rotate-0",
                                 )}
@@ -122,24 +125,38 @@ export function Sidebar() {
                               />
                             </MenuItem>
 
-                            {expandedItems.includes(item.title) && (
-                              <ul
-                                className="ml-9 mr-0 space-y-1.5 pb-[15px] pr-0 pt-2"
-                                role="menu"
-                              >
+                            {/* Submenu Items */}
+                            <div
+                              className={cn(
+                                "overflow-hidden transition-all duration-200",
+                                expandedItems.includes(item.title)
+                                  ? "max-h-96 opacity-100"
+                                  : "max-h-0 opacity-0"
+                              )}
+                            >
+                              <ul className="ml-9 mt-1 space-y-0.5" role="menu">
                                 {item.items.map((subItem) => (
                                   <li key={subItem.title} role="none">
                                     <MenuItem
                                       as="link"
                                       href={subItem.url}
                                       isActive={pathname === subItem.url}
+                                      className="py-2 text-sm"
                                     >
-                                      <span>{subItem.title}</span>
+                                      <div className="flex items-center gap-3">
+                                        {subItem.icon && (
+                                          <subItem.icon 
+                                            className="size-4 shrink-0" 
+                                            aria-hidden="true" 
+                                          />
+                                        )}
+                                        <span>{subItem.title}</span>
+                                      </div>
                                     </MenuItem>
                                   </li>
                                 ))}
                               </ul>
-                            )}
+                            </div>
                           </div>
                         ) : (
                           (() => {
@@ -151,7 +168,7 @@ export function Sidebar() {
 
                             return (
                               <MenuItem
-                                className="flex items-center gap-3 py-3"
+                                className="flex items-center gap-3 py-3 w-full"
                                 as="link"
                                 href={href}
                                 isActive={pathname === href}
@@ -160,7 +177,6 @@ export function Sidebar() {
                                   className="size-6 shrink-0"
                                   aria-hidden="true"
                                 />
-
                                 <span>{item.title}</span>
                               </MenuItem>
                             );

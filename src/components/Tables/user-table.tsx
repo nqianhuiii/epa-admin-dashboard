@@ -12,7 +12,7 @@ import { DownloadIcon, PreviewIcon } from "./icons";
 import Image from "next/image";
 
 import { AppUser } from "@/services/userSercvice";
-import { DeleteUserForm } from "../deleteUserForm";
+import { DeleteUserForm } from "../DeleteUserForm";
 
 export async function UserTable({users}: {users: AppUser[]}) {
 

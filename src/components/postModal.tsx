@@ -6,8 +6,8 @@ import dayjs from "dayjs";
 import { HeartIcon, MessageCircleIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
-import Comments from "./comments";
-import ImageCarousel from "./imageCarousel";
+import Comments from "./CommentSection";
+import ImageCarousel from "./ImageCarousel";
 
 
 interface PostModalProps {

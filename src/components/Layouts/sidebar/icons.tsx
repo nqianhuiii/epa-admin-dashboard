@@ -216,3 +216,81 @@ export function ForumIcon(props: PropsType) {
   );
 }
 
+export function MaterialsIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M4 3h16v2H4V3zm0 4h16v2H4V7zm0 4h10v2H4v-2zm0 4h10v2H4v-2z" />
+    </svg>
+  );
+}
+
+export function TextbookIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M4 4a2 2 0 0 1 2-2h6v18H6a2 2 0 0 1-2-2V4z" />
+      <path d="M14 2h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6V2z" />
+    </svg>
+  );
+}
+
+
+
+export function ExerciseIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      {/* Document/Paper background */}
+      <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+      
+      {/* Question mark */}
+      <path d="M10.5,12A1.5,1.5 0 0,0 12,13.5A1.5,1.5 0 0,0 13.5,12A1.5,1.5 0 0,0 12,10.5A1.5,1.5 0 0,0 10.5,12M12,7.5C13.4,7.5 14.5,8.6 14.5,10C14.5,11 14,11.5 13.3,12.1L13,12.4C12.4,12.9 12.2,13.2 12.2,13.8H11.8C11.8,12.8 12.1,12.4 12.7,11.9L13,11.6C13.4,11.2 13.5,11 13.5,10.5C13.5,9.7 12.8,9 12,9C11.2,9 10.5,9.7 10.5,10.5H10C10,8.6 11.1,7.5 12,7.5M12,15.8A0.6,0.6 0 0,0 11.4,16.4A0.6,0.6 0 0,0 12,17A0.6,0.6 0 0,0 12.6,16.4A0.6,0.6 0 0,0 12,15.8" />
+    </svg>
+  );
+}
+
+export function NotesIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M5 4h14a1 1 0 0 1 1 1v14l-4-4H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 4v2h10V8H7zm0 4v2h6v-2H7z" />
+    </svg>
+  );
+} 
+
+export function PastYearIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M5 3h14a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H5V3zm2 4v2h10V7H7zm0 4v2h10v-2H7zm0 4v2h6v-2H7z" />
+    </svg>
+  );
+}
+
+

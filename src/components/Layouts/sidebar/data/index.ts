@@ -11,6 +11,7 @@ export const NAV_DATA = [
           {
             title: "eCommerce",
             url: "/",
+            icon: Icons.HomeIcon,
           },
         ],
       },
@@ -33,6 +34,36 @@ export const NAV_DATA = [
         items: [],
       },
       {
+        title: "Materials",
+        url: "/materials",
+        icon: Icons.MaterialsIcon,
+        items: [
+          {
+            title: "Textbook",
+            url: "/materials/form-textbook",
+            icon: Icons.TextbookIcon,
+          },
+          {
+            title: "Notes",
+            url: "/materials/form-notes",
+            icon: Icons.NotesIcon,
+
+          },
+          {
+            title: "Exercise",
+            url: "/materials/form-exercise",
+            icon: Icons.ExerciseIcon,
+
+          },
+          {
+            title: "Past Year Question",
+            url: "/materials/form-pastYear",
+            icon: Icons.PastYearIcon,
+
+          },
+        ],
+      },      
+      {
         title: "Calendar",
         url: "/calendar",
         icon: Icons.Calendar,
@@ -51,10 +82,12 @@ export const NAV_DATA = [
           {
             title: "Form Elements",
             url: "/forms/form-elements",
+            icon: Icons.Alphabet,
           },
           {
             title: "Form Layout",
             url: "/forms/form-layout",
+            icon: Icons.Alphabet,
           },
         ],
       },
@@ -65,6 +98,7 @@ export const NAV_DATA = [
           {
             title: "Settings",
             url: "/pages/settings",
+            icon: Icons.Alphabet,
           },
         ],
       },
