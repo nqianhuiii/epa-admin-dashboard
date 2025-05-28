@@ -1,28 +1,13 @@
 'use client';
-import { useTransition } from "react";
-import { deleteTextbookAction } from "@/app/actions/textbookAction";
+
 import { TextbookData } from "@/types/types";
+import { DeleteTextbookForm } from "./DeleteTextbookForm";
 
 interface TextbookItemProps {
   textbook: TextbookData;
 }
 
 export default function TextbookItem({ textbook }: TextbookItemProps) {
-  const [isPending, startTransition] = useTransition();
-
-  const handleDelete = () => {
-    if (!confirm(`Are you sure you want to delete "${textbook.title}"?`)) return;
-    
-    startTransition(async () => {
-      if (textbook.id) {
-        const result = await deleteTextbookAction(textbook.id);
-        if (!result.success) {
-          alert(result.error || 'Failed to delete textbook');
-        }
-      }
-    });
-  };
-
   const formatFileSize = (bytes: number) => {
     return (bytes / 1024 / 1024).toFixed(2) + ' MB';
   };
@@ -57,16 +42,15 @@ export default function TextbookItem({ textbook }: TextbookItemProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary text-white px-4 py-2 rounded text-sm hover:bg-primary/90 transition-colors"
-            >
+          >
             View PDF
           </a>
-          <button
-            onClick={handleDelete}
-            disabled={isPending}
-            className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
-          >
-            {isPending ? 'Deleting...' : 'Delete'}
-          </button>
+          
+          <DeleteTextbookForm
+            textbookId={textbook.id!}
+            textbookTitle={textbook.title}
+            fileName={textbook.fileName}
+          />
         </div>
       </div>
     </div>

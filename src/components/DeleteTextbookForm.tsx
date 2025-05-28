@@ -1,17 +1,22 @@
 "use client";
 
 import { TrashIcon } from "@/assets/icons";
-import { deleteUserAction } from "@/app/actions/userActions";
+import { deleteTextbookAction } from "@/app/actions/textbookAction";
 import { useState, useTransition } from "react";
 import { ToastAlert } from "@/components/ui-elements/alert/toast-alert";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
-interface DeleteUserFormProps {
-  userId: string;
-  userName: string;
+interface DeleteTextbookFormProps {
+  textbookId: string;
+  textbookTitle: string;
+  fileName: string;
 }
 
-export function DeleteUserForm({ userId, userName }: DeleteUserFormProps) {
+export function DeleteTextbookForm({ 
+  textbookId, 
+  textbookTitle, 
+  fileName 
+}: DeleteTextbookFormProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [toast, setToast] = useState<{
     isOpen: boolean;
@@ -28,21 +33,21 @@ export function DeleteUserForm({ userId, userName }: DeleteUserFormProps) {
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deleteUserAction(userId);
+      const result = await deleteTextbookAction(textbookId);
       if (result.success) {
         setShowConfirm(false);
         setToast({
           isOpen: true,
           variant: "success",
           title: "Success",
-          description: `User "${userName}" has been deleted successfully.`
+          description: `Textbook "${fileName}" has been deleted successfully.`
         });
       } else {
         setToast({
           isOpen: true,
           variant: "error",
           title: "Error",
-          description: result.error || "Failed to delete user"
+          description: result.error || "Failed to delete textbook"
         });
       }
     });
@@ -57,20 +62,20 @@ export function DeleteUserForm({ userId, userName }: DeleteUserFormProps) {
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        className="hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
       >
-        <span className="sr-only">Delete User</span>
-        <TrashIcon />
+        {isPending ? 'Deleting...' : 'Delete'}
       </button>
 
       <DeleteConfirmationModal
         isOpen={showConfirm}
         onClose={() => setShowConfirm(false)}
         onConfirm={handleDelete}
-        title="Delete User"
-        message="Are you sure you want to delete user"
-        itemName={userName}
+        title="Delete Textbook"
+        message="Are you sure you want to delete textbook"
+        itemName={textbookTitle}
         isLoading={isPending}
+        confirmText="Delete Textbook"
       />
 
       <ToastAlert
