@@ -293,4 +293,18 @@ export function PastYearIcon(props: PropsType) {
   );
 }
 
+export function StudySessionIcon(props: PropsType) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      {...props}
+    >
+      <path d="M4 5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1l3-2v14l-3-2v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5z" />
+    </svg>
+  );
+}
+
 

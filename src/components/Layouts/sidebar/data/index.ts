@@ -56,7 +56,13 @@ export const NAV_DATA = [
 
           },
         ],
-      },      
+      },  
+      {
+        title: "Study Sessions",
+        url: "/studySessions",
+        icon: Icons.StudySessionIcon,
+        items: [],
+      },   
       {
         title: "Calendar",
         url: "/calendar",
