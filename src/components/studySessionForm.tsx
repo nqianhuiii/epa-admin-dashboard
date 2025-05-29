@@ -6,6 +6,7 @@ import InputGroup from "./FormElements/InputGroup";
 import { TextAreaGroup } from "./FormElements/InputGroup/text-area";
 import { StudySession, CreateStudySessionInput } from "@/types/types";
 import DatePickerOne from "./FormElements/DatePicker/DatePickerOne";
+import { useRouter } from "next/navigation";
 
 interface StudySessionFormProps {
   session?: StudySession;
@@ -18,6 +19,7 @@ export default function StudySessionForm({
   onSuccess,
   onCancel,
 }: StudySessionFormProps) {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
@@ -90,6 +92,10 @@ export default function StudySessionForm({
             onSuccess();
           }, 1500);
         }
+
+        router.push('/studySessions');
+        router.refresh(); 
+
       } else if (result) {
         setMessage({ type: "error", text: result.message });
       }
