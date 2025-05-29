@@ -107,6 +107,36 @@ export const uploadNotesToCloudinary = async (file: File): Promise<string> => {
   }
 };
 
+export const uploadPastYearToCloudinary = async (file: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'meterials_upload');
+    formData.append('resource_type', 'raw'); // Explicitly set resource type
+    formData.append('folder', 'pastYears');   // Optional: organize in folders
+    
+    // Use the raw endpoint
+    const response = await fetch(`https://api.cloudinary.com/v1_1/do9emnqcm/raw/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Cloudinary error:', errorText);
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Raw upload with options response:', data);
+    
+    return data.secure_url;
+  } catch (error) {
+    console.error('Error uploading PDF to Cloudinary:', error);
+    throw new Error('Failed to upload PDF');
+  }
+};
+
 
 // // Function to get PDF URL with proper headers for viewing
 // export const getPdfViewUrl = (cloudinaryUrl: string): string => {

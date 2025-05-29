@@ -16,3 +16,13 @@ export interface NotesData {
   uploadedAt: Date;
 }
 
+export interface PastYearData {
+  id?: string;
+  title: string;
+  pdfUrl: string;
+  fileName: string;
+  fileSize: number;
+  uploadedAt: Date;
+}
+
+

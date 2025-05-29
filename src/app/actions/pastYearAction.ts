@@ -1,21 +1,21 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { uploadTextbookToCloudinary } from "@/services/cloudinaryServer";
-import { TextbookService } from "@/services/textbookService";
-import { TextbookData } from "@/types/types";
+import { uploadPastYearToCloudinary } from "@/services/cloudinaryServer";
+import { PastYearService } from '@/services/pastYearService';
+import { PastYearData } from "@/types/types";
 
 
-export async function getTextbooks(): Promise<TextbookData[]> {
+export async function getPastYears(): Promise<PastYearData[]> {
   try {
-    return await TextbookService.getAll();
+    return await PastYearService.getAll();
   } catch (error) {
-    console.error('Failed to fetch textbooks:', error);
+    console.error('Failed to fetch past years:', error);
     return [];
   }
 }
 
-export async function uploadTextbookAction(formData: FormData) {
+export async function uploadPastYearAction(formData: FormData) {
   try {
     const file = formData.get('file') as File;
     const title = formData.get('title') as string;
@@ -35,10 +35,10 @@ export async function uploadTextbookAction(formData: FormData) {
     }
 
     // Upload to Cloudinary
-    const pdfUrl = await uploadTextbookToCloudinary(file);
+    const pdfUrl = await uploadPastYearToCloudinary(file);
 
     // Save to Firestore using service
-    const textbookData = {
+    const pastYearData = {
       title,
       pdfUrl,
       fileName: file.name,
@@ -46,10 +46,10 @@ export async function uploadTextbookAction(formData: FormData) {
       uploadedAt: new Date(),
     };
 
-    await TextbookService.create(textbookData);
+    await PastYearService.create(pastYearData);
 
     // Revalidate the page to show new data
-    revalidatePath('/textbook');
+    revalidatePath('/pastYear');
 
     return { success: true };
   } catch (error) {
@@ -58,16 +58,16 @@ export async function uploadTextbookAction(formData: FormData) {
   }
 }
 
-export async function deleteTextbookAction(textbookId: string) {
+export async function deletePastYearAction(pastYearId: string) {
   try {
-    await TextbookService.delete(textbookId);
+    await PastYearService.delete(pastYearId);
 
     // Revalidate the page to show updated data
-    revalidatePath('/textbook');
+    revalidatePath('/pastYear');
 
     return { success: true };
   } catch (error) {
-    console.error('Failed to delete textbook:', error);
-    return { success: false, error: 'Failed to delete textbook' };
+    console.error('Failed to delete past year:', error);
+    return { success: false, error: 'Failed to delete past year' };
   }
 }
