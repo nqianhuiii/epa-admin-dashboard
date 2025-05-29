@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { StudySessionsService } from "@/services/studySessionService";
 import { StudySession, CreateStudySessionInput, UpdateStudySessionInput } from "@/types/types";
+import { validateStudySessionInput } from "@/utils/formValidation";
 
 // Response types for actions
 interface ActionResponse<T = undefined> {
@@ -11,47 +12,11 @@ interface ActionResponse<T = undefined> {
   data?: T;
 }
 
-// Validation helpers
-function validateStudySessionInput(input: CreateStudySessionInput): string | null {
-  if (!input.title?.trim()) {
-    return "Title is required";
-  }
-  if (!input.description?.trim()) {
-    return "Description is required";
-  }
-  if (!input.date) {
-    return "Date is required";
-  }
-  if (!input.meetingLink?.trim()) {
-    return "Meeting link is required";
-  }
-  if (!input.teacherName?.trim()) {
-    return "Teacher name is required";
-  }
-
-  // Validate meeting link format
-  const urlPattern = /^https?:\/\/.+/;
-  if (!urlPattern.test(input.meetingLink)) {
-    return "Please enter a valid meeting link (must start with http:// or https://)";
-  }
-
-  // Validate date is not in the past
-  const sessionDate = new Date(input.date);
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  if (sessionDate < today) {
-    return "Session date cannot be in the past";
-  }
-
-  return null; // No validation errors
-}
-
 // Get all study sessions
 export async function getStudySessions(): Promise<StudySession[]> {
   try {
-   const service = new StudySessionsService();
-   return await service.getAllStudySessions();
+    const service = new StudySessionsService();
+    return await service.getAllStudySessions();
   } catch (error) {
     console.error("Error in getStudySessions action:", error);
     return [];
@@ -71,6 +36,140 @@ export async function getStudySessionById(id: string): Promise<StudySession | nu
     return null;
   }
 }
+
+// Create new study session
+export async function createStudySession(input: CreateStudySessionInput): Promise<ActionResponse<StudySession>> {
+  try {
+    // Validate input
+    const validationError = validateStudySessionInput(input);
+    if (validationError) {
+      return { success: false, message: validationError };
+    }
+
+    // Create study session using service
+    const service = new StudySessionsService();
+    const newSession = await service.createStudySession(input);
+
+    // Revalidate the page to show updated data
+    revalidatePath("/study-sessions");
+    return {
+      success: true,
+      message: "Study session created successfully",
+      data: newSession
+    };
+  } catch (error) {
+    console.error("Error in createStudySession action:", error);
+
+    return {
+      success: false,
+      message: "Failed to create study session. Please try again."
+    };
+  }
+}
+
+// Update study session
+export async function updateStudySession(input: UpdateStudySessionInput): Promise<ActionResponse<StudySession>> {
+  try {
+    // Validate input
+    if (!input.id?.trim()) {
+      return { success: false, message: "Session ID is required" };
+    }
+
+    const validationError = validateStudySessionInput(input);
+    if (validationError) {
+      return { success: false, message: validationError };
+    }
+
+    const service = new StudySessionsService();
+    const updatedSession = await service.updateStudySession(input);
+
+    revalidatePath("/study-sessions");
+
+    return {
+      success: true,
+      message: "Study session updated successfully",
+      data: updatedSession
+    };
+  } catch (error) {
+    console.error("Error in updateStudySession action:", error);
+
+    // Handle specific errors
+    if (error instanceof Error) {
+      if (error.message === "Study session not found") {
+        return {
+          success: false,
+          message: "Study session not found"
+        };
+      }
+      if (error.message.includes("permission")) {
+        return {
+          success: false,
+          message: "You don't have permission to update this study session"
+        };
+      }
+      if (error.message.includes("network")) {
+        return {
+          success: false,
+          message: "Network error. Please check your connection and try again"
+        };
+      }
+    }
+
+    return {
+      success: false,
+      message: "Failed to update study session. Please try again."
+    };
+  }
+}
+
+// Delete study session
+export async function deleteStudySession(id: string): Promise<ActionResponse> {
+  try {
+    if (!id?.trim()) {
+      return { success: false, message: "Session ID is required" };
+    }
+
+    const service = new StudySessionsService();
+    await service.deleteStudySession(id);
+
+    revalidatePath("/study-sessions");
+
+    return {
+      success: true,
+      message: "Study session deleted successfully"
+    };
+  } catch (error) {
+    console.error("Error in deleteStudySession action:", error);
+
+    // Handle specific errors
+    if (error instanceof Error) {
+      if (error.message === "Study session not found") {
+        return {
+          success: false,
+          message: "Study session not found"
+        };
+      }
+      if (error.message.includes("permission")) {
+        return {
+          success: false,
+          message: "You don't have permission to delete this study session"
+        };
+      }
+      if (error.message.includes("network")) {
+        return {
+          success: false,
+          message: "Network error. Please check your connection and try again"
+        };
+      }
+    }
+
+    return {
+      success: false,
+      message: "Failed to delete study session. Please try again."
+    };
+  }
+}
+
 
 // Get upcoming study sessions
 // export async function getUpcomingStudySessions(): Promise<StudySession[]> {
@@ -93,137 +192,3 @@ export async function getStudySessionById(id: string): Promise<StudySession | nu
 //     return [];
 //   }
 // }
-
-// Create new study session
-export async function createStudySession(input: CreateStudySessionInput): Promise<ActionResponse<StudySession>> {
-  try {
-    // Validate input
-    const validationError = validateStudySessionInput(input);
-    if (validationError) {
-      return { success: false, message: validationError };
-    }
-
-    // Create study session using service
-    const service = new StudySessionsService();
-    const newSession = await service.createStudySession(input);
-    
-    // Revalidate the page to show updated data
-    revalidatePath("/study-sessions");
-    
-    return {
-      success: true,
-      message: "Study session created successfully",
-      data: newSession
-    };
-  } catch (error) {
-    console.error("Error in createStudySession action:", error);
-        
-    return {
-      success: false,
-      message: "Failed to create study session. Please try again."
-    };
-  }
-}
-
-// Update study session
-export async function updateStudySession(input: UpdateStudySessionInput): Promise<ActionResponse<StudySession>> {
-  try {
-    // Validate input
-    if (!input.id?.trim()) {
-      return { success: false, message: "Session ID is required" };
-    }
-    
-    const validationError = validateStudySessionInput(input);
-    if (validationError) {
-      return { success: false, message: validationError };
-    }
-
-    const service = new StudySessionsService();
-    const updatedSession = await service.updateStudySession(input);
-    
-    revalidatePath("/study-sessions");
-    
-    return {
-      success: true,
-      message: "Study session updated successfully",
-      data: updatedSession
-    };
-  } catch (error) {
-    console.error("Error in updateStudySession action:", error);
-    
-    // Handle specific errors
-    if (error instanceof Error) {
-      if (error.message === "Study session not found") {
-        return {
-          success: false,
-          message: "Study session not found"
-        };
-      }
-      if (error.message.includes("permission")) {
-        return {
-          success: false,
-          message: "You don't have permission to update this study session"
-        };
-      }
-      if (error.message.includes("network")) {
-        return {
-          success: false,
-          message: "Network error. Please check your connection and try again"
-        };
-      }
-    }
-    
-    return {
-      success: false,
-      message: "Failed to update study session. Please try again."
-    };
-  }
-}
-
-// Delete study session
-export async function deleteStudySession(id: string): Promise<ActionResponse> {
-  try {
-    if (!id?.trim()) {
-      return { success: false, message: "Session ID is required" };
-    }
-
-    const service = new StudySessionsService();
-    await service.deleteStudySession(id);
-    
-    revalidatePath("/study-sessions");
-    
-    return {
-      success: true,
-      message: "Study session deleted successfully"
-    };
-  } catch (error) {
-    console.error("Error in deleteStudySession action:", error);
-    
-    // Handle specific errors
-    if (error instanceof Error) {
-      if (error.message === "Study session not found") {
-        return {
-          success: false,
-          message: "Study session not found"
-        };
-      }
-      if (error.message.includes("permission")) {
-        return {
-          success: false,
-          message: "You don't have permission to delete this study session"
-        };
-      }
-      if (error.message.includes("network")) {
-        return {
-          success: false,
-          message: "Network error. Please check your connection and try again"
-        };
-      }
-    }
-    
-    return {
-      success: false,
-      message: "Failed to delete study session. Please try again."
-    };
-  }
-}

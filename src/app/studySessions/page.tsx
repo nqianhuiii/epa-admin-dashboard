@@ -4,14 +4,16 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import StudySessionForm from "@/components/studySessionForm";
 // import StudySessionsList from "@/components/StudySessionsList";
 import type { Metadata } from "next";
-
+import { getStudySessions } from "../actions/studySessionActions";
+import StudySessionsList from "@/components/studySessionsList";
 export const metadata: Metadata = {
+    
   title: "Study Sessions",
   description: "Create and manage study sessions"
 };
 
 export default async function StudySessionsPage() {
-//   const initialSessions = await getStudySessions();
+  const initialSessions = await getStudySessions();
 
   return (
     <>
@@ -24,7 +26,7 @@ export default async function StudySessionsPage() {
         </ShowcaseSection>
 
         {/* Sessions List - Client Component */}
-        {/* <StudySessionsList initialSessions={initialSessions} /> */}
+        <StudySessionsList initialSessions={initialSessions} />
       </div>
     </>
   );
