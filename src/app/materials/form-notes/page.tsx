@@ -1,9 +1,8 @@
 import { getNotes } from "@/app/actions/notesActions";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import NotesUploadForm from "@/components/NotesUploadForm";
 import NotesList from "@/components/NotesList";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Notes Upload",
@@ -16,15 +15,17 @@ export default async function NotesPage() {
   return (
     <>
       <Breadcrumb pageName="Notes" />
-      
-      <div className="w-full space-y-6">
-        {/* Upload Form - Client Component */}
-        <ShowcaseSection title="Upload Notes" className="space-y-5.5 !p-6.5">
-          <NotesUploadForm />
-        </ShowcaseSection>
-
-        <NotesList initialNotes={initialNotes} />
-      </div>
+        <div className="mb-6 flex justify-end">
+            <Link 
+                href="/materials/form-notes/create"
+                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-3 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+            >
+                + Create Notes
+            </Link>
+        </div>
+        <div className="w-full space-y-6">
+            <NotesList initialNotes={initialNotes} />
+        </div>
     </>
   );
 }

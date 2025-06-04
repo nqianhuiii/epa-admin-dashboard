@@ -10,10 +10,12 @@ export interface TextbookData {
 export interface NotesData {
   id?: string;
   title: string;
+  chapter:string;
   pdfUrl: string;
   fileName: string;
   fileSize: number;
   uploadedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface PastYearData {

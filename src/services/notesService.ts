@@ -8,7 +8,8 @@ import {
   getDoc,
   orderBy, 
   query,
-  Timestamp 
+  Timestamp, 
+  updateDoc
 } from 'firebase/firestore';
 import { NotesData } from "@/types/types";
 
@@ -24,6 +25,8 @@ export class NotesService {
         id: doc.id,
         ...doc.data(),
         uploadedAt: doc.data().uploadedAt.toDate(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(), 
+
       })) as NotesData[];
     } catch (error) {
       console.error('Failed to fetch notes:', error);
@@ -81,6 +84,27 @@ export class NotesService {
     } catch (error) {
       console.error('Failed to fetch noets:', error);
       throw new Error('Failed to fetch notes');
+    }
+  }
+
+  static async update(
+    id: string, 
+    updateData: Partial<Omit<NotesData, 'id' | 'uploadedAt'>>
+  ): Promise<void> {
+    try {
+      const notesRef = doc(db, 'notes', id);
+      
+      // Convert Date objects to Timestamps for Firestore
+      const docData: any = { ...updateData };
+      
+      if (docData.updatedAt && docData.updatedAt instanceof Date) {
+        docData.updatedAt = Timestamp.fromDate(docData.updatedAt);
+      }
+      
+      await updateDoc(notesRef, docData);
+    } catch (error) {
+      console.error('Failed to update notes:', error);
+      throw new Error('Failed to update notes');
     }
   }
 }

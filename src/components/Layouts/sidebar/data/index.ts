@@ -62,46 +62,52 @@ export const NAV_DATA = [
         url: "/studySessions",
         icon: Icons.StudySessionIcon,
         items: [],
-      },   
-      {
-        title: "Calendar",
-        url: "/calendar",
-        icon: Icons.Calendar,
-        items: [],
       },
+      {
+        title: "Flashcards",
+        url: "/flashcard",
+        icon: Icons.FlashcardIcon,
+        items: [],
+      },      
+      // {
+      //   title: "Calendar",
+      //   url: "/calendar",
+      //   icon: Icons.Calendar,
+      //   items: [],
+      // },
       {
         title: "Profile",
         url: "/profile",
         icon: Icons.User,
         items: [],
       },
-      {
-        title: "Forms",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Form Elements",
-            url: "/forms/form-elements",
-            icon: Icons.Alphabet,
-          },
-          {
-            title: "Form Layout",
-            url: "/forms/form-layout",
-            icon: Icons.Alphabet,
-          },
-        ],
-      },
-      {
-        title: "Pages",
-        icon: Icons.Alphabet,
-        items: [
-          {
-            title: "Settings",
-            url: "/pages/settings",
-            icon: Icons.Alphabet,
-          },
-        ],
-      },
+      // {
+      //   title: "Forms",
+      //   icon: Icons.Alphabet,
+      //   items: [
+      //     {
+      //       title: "Form Elements",
+      //       url: "/forms/form-elements",
+      //       icon: Icons.Alphabet,
+      //     },
+      //     {
+      //       title: "Form Layout",
+      //       url: "/forms/form-layout",
+      //       icon: Icons.Alphabet,
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Pages",
+      //   icon: Icons.Alphabet,
+      //   items: [
+      //     {
+      //       title: "Settings",
+      //       url: "/pages/settings",
+      //       icon: Icons.Alphabet,
+      //     },
+      //   ],
+      // },
     ],
   },
   // {

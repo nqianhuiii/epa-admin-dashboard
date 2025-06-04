@@ -62,7 +62,7 @@ export function DeleteNotesForm({
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
+        className="bg-white text-red-500 border border-red-500 px-4 py-2 rounded text-sm font-medium hover:bg-red-500 hover:text-white transition-colors"
       >
         {isPending ? 'Deleting...' : 'Delete'}
       </button>

@@ -1,8 +1,4 @@
-// import { getStudySessions } from "@/app/actions/studySessionsActions";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
-import StudySessionForm from "@/components/studySessionForm";
-// import StudySessionsList from "@/components/StudySessionsList";
 import type { Metadata } from "next";
 import { getStudySessions } from "../actions/studySessionActions";
 import StudySessionsList from "@/components/studySessionsList";

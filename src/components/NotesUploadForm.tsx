@@ -1,14 +1,34 @@
 'use client';
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import InputGroup from "@/components/FormElements/InputGroup";
-import { uploadNotesAction } from "@/app/actions/notesActions";
+import { uploadNotesAction, updateNotesAction } from "@/app/actions/notesActions"; // Add updateNotesAction
+import { Select } from "./FormElements/select";
+import { CHAPTER_OPTIONS } from "@/constants/chapterConstant";
+import { NotesData } from "@/types/types";
 
-export default function NoteskUploadForm() {
+interface NotesUploadFormProps {
+  notes?: NotesData; // Optional notes data for editing
+  onSuccess?: () => void; // Success callback
+  onCancel?: () => void; // Cancel callback
+  isEditing?: boolean; // Flag to indicate edit mode
+}
+
+export default function NotesUploadForm({ 
+  notes, 
+  onSuccess, 
+  onCancel, 
+  isEditing = false 
+}: NotesUploadFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(isEditing && notes ? notes.title : "");
+  const [subject, setSubject] = useState(isEditing && notes ? notes.chapter : "");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const formInitialized = useRef(false);
+
+  // No longer needed with direct initialization
+  // useEffect removed
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -24,85 +44,137 @@ export default function NoteskUploadForm() {
   };
 
   const handleSubmit = async (formData: FormData) => {
-    if (!selectedFile || !title.trim()) return;
+    // For editing, file is optional (only if user wants to replace the PDF)
+    // For new upload, file is required
+    if (!isEditing && !selectedFile) return;
+    if (!title.trim() || !subject.trim()) return;
 
     startTransition(async () => {
       try {
-        const result = await uploadNotesAction(formData);
+        let result;
+        
+        if (isEditing && notes) {
+          // Add notes ID to form data for update
+          formData.append('notesId', notes.id!);
+          result = await updateNotesAction(formData);
+        } else {
+          result = await uploadNotesAction(formData);
+        }
         
         if (result.success) {
-          // Reset form
-          setSelectedFile(null);
-          setTitle("");
+          if (!isEditing) {
+            // Reset form only for new uploads
+            setSelectedFile(null);
+            setTitle("");
+            setSubject(""); 
+            
+            // Clear file input
+            const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
+            if (fileInput) fileInput.value = '';
+          }
+          
           setError(null);
           setSuccess(true);
           
-          // Clear file input
-          const fileInput = document.getElementById('pdf-upload') as HTMLInputElement;
-          if (fileInput) fileInput.value = '';
+          // Call success callback
+          if (onSuccess) {
+            setTimeout(() => onSuccess(), 1000); // Small delay to show success message
+          }
           
           // Hide success message after 3 seconds
           setTimeout(() => setSuccess(false), 3000);
         } else {
-          setError(result.error || 'Upload failed');
+          setError(result.error || `${isEditing ? 'Update' : 'Upload'} failed`);
           setSuccess(false);
         }
       } catch (error) {
-        setError('Upload failed');
+        setError(`${isEditing ? 'Update' : 'Upload'} failed`);
         setSuccess(false);
       }
     });
   };
 
   return (
-    <form action={handleSubmit} className="space-y-5.5">
-      <InputGroup
-        type="text"
-        label="Notes Title"
-        placeholder="Enter notes title"
-        value={title}
-        handleChange={(e) => setTitle(e.target.value)}
-        required
-      />
-      
-      <InputGroup
-        type="file"
-        fileStyleVariant="style1"
-        label="Attach PDF file"
-        placeholder="Select PDF file"
-        handleChange={handleFileChange}
-        name="file"
-        required
-      />
-      
-      <input type="hidden" name="title" value={title} />
-      
-      {selectedFile && (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
-          <p>Selected: {selectedFile.name}</p>
-          <p>Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+    <div>
+      <form action={handleSubmit} className="space-y-5.5">
+        <InputGroup
+          type="file"
+          fileStyleVariant="style1"
+          label={isEditing ? "Replace PDF file (optional)" : "Attach PDF file"}
+          placeholder="Select PDF file"
+          handleChange={handleFileChange}
+          name="file"
+          required={!isEditing} // File is only required for new uploads
+        />
+
+        {isEditing && notes && !selectedFile && (
+          <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-3 rounded">
+            <p>Current file: {notes.fileName}</p>
+            <p>Leave file input empty to keep the current PDF</p>
+          </div>
+        )}
+
+        <InputGroup
+          type="text"
+          label="Notes Title"
+          placeholder="Enter notes title"
+          value={title}
+          handleChange={(e) => setTitle(e.target.value)}
+          required
+        />
+        
+        <Select
+          label="Chapter"
+          placeholder="Select the chapter"
+          className="mb-4.5"
+          items={CHAPTER_OPTIONS}
+          value={subject}
+          onValueChange={(val) => setSubject(val)}
+          required
+        />
+        
+        <input type="hidden" name="title" value={title} />
+        <input type="hidden" name="subject" value={subject} />
+        
+        {selectedFile && (
+          <div className="text-sm text-gray-600 dark:text-gray-300">
+            <p>Selected: {selectedFile.name}</p>
+            <p>Size: {(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+          </div>
+        )}
+        
+        {error && (
+          <div className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded">
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className="text-green-500 text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded">
+            {isEditing ? 'Notes updated successfully!' : 'Notes uploaded successfully!'}
+          </div>
+        )}
+        
+        <div className="flex justify-center gap-3">
+          <button
+            type="submit"
+            disabled={isPending || !title.trim() || !subject.trim() || (!isEditing && !selectedFile)}
+            className="bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary/90 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          >
+            {isPending ? (isEditing ? 'Updating...' : 'Uploading...') : (isEditing ? 'Update Notes' : 'Upload Notes')}
+          </button>
+          
+          {isEditing && onCancel && (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+          )}
         </div>
-      )}
-      
-      {error && (
-        <div className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded">
-          {error}
-        </div>
-      )}
-      
-      {success && (
-        <div className="text-green-500 text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded">
-          Notes uploaded successfully!
-        </div>
-      )}
-      
-      <button
-        type="submit"
-        disabled={isPending || !selectedFile || !title.trim()}
-        className="w-full bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary/90 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-      >
-        {isPending ? 'Uploading...' : 'Upload Notes'}
-      </button>
-    </form>
+      </form>
+    </div>
   );
 }
