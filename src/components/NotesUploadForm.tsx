@@ -5,6 +5,7 @@ import { uploadNotesAction, updateNotesAction } from "@/app/actions/notesActions
 import { Select } from "./FormElements/select";
 import { CHAPTER_OPTIONS } from "@/constants/chapterConstant";
 import { NotesData } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 interface NotesUploadFormProps {
   notes?: NotesData; // Optional notes data for editing
@@ -26,6 +27,8 @@ export default function NotesUploadForm({
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
   const formInitialized = useRef(false);
+  const router = useRouter();
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,7 +78,7 @@ export default function NotesUploadForm({
           
           // Call success callback
           if (onSuccess) {
-            setTimeout(() => onSuccess(), 1000); // Small delay to show success message
+            setTimeout(() => onSuccess(), 1500); 
           }
           
           // Hide success message after 3 seconds

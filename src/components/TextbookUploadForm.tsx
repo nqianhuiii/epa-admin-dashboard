@@ -1,5 +1,6 @@
 'use client';
 import { useState, useTransition, useRef } from "react";
+import { useRouter } from "next/navigation"; // Add this import
 import InputGroup from "@/components/FormElements/InputGroup";
 import { uploadTextbookAction, updateTextbookAction } from "@/app/actions/textbookAction"; // Add updateTextbookAction
 import { TextbookData } from "@/types/types";
@@ -23,6 +24,7 @@ export default function TextbookUploadForm({
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
   const formInitialized = useRef(false);
+  const router = useRouter(); // Add router hook
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,6 +75,11 @@ export default function TextbookUploadForm({
           if (onSuccess) {
             setTimeout(() => onSuccess(), 1000); // Small delay to show success message
           }
+          
+          // Add redirect here
+          setTimeout(() => {
+            router.push('/materials/form-textbook');
+          }, 1500); // Small delay to show success message
           
           // Hide success message after 3 seconds
           setTimeout(() => setSuccess(false), 3000);

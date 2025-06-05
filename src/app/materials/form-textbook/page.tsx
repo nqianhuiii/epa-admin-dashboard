@@ -1,8 +1,6 @@
 import { getTextbooks } from "@/app/actions/textbookAction";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import TextbookList from "@/components/TextbookList";
-import TextbookUploadForm from "@/components/TextbookUploadForm";
 import type { Metadata } from "next";
 import Link from "next/link";
 

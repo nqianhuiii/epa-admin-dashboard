@@ -49,7 +49,7 @@ export async function uploadTextbookAction(formData: FormData) {
     await TextbookService.create(textbookData);
 
     // Revalidate the page to show new data
-    revalidatePath('/textbook');
+    revalidatePath('/materials/form-textbook');
 
     return { success: true };
   } catch (error) {
@@ -63,7 +63,7 @@ export async function deleteTextbookAction(textbookId: string) {
     await TextbookService.delete(textbookId);
 
     // Revalidate the page to show updated data
-    revalidatePath('/textbook');
+    revalidatePath('/materials/form-textbook');
 
     return { success: true };
   } catch (error) {

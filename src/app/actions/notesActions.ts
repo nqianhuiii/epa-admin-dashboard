@@ -52,7 +52,7 @@ export async function uploadNotesAction(formData: FormData) {
     await NotesService.create(notesData);
 
     // Revalidate the page to show new data
-    revalidatePath('/notes');
+    revalidatePath('/material/form-notes');
 
     return { success: true };
   } catch (error) {
@@ -66,7 +66,7 @@ export async function deleteNotesAction(notesId: string) {
     await NotesService.delete(notesId);
 
     // Revalidate the page to show updated data
-    revalidatePath('/notes');
+    revalidatePath('/material/form-notes');
 
     return { success: true };
   } catch (error) {

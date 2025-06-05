@@ -1,5 +1,6 @@
 'use client';
 import { useState, useTransition, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { uploadExerciseAction, updateExerciseAction } from "@/app/actions/exerciseAction"; 
 import InputGroup from "@/components/FormElements/InputGroup";
 import { TYPE_OPTIONS } from "@/constants/exerciseTypeConstant";
@@ -28,6 +29,7 @@ export default function ExerciseUploadForm({
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
   const formInitialized = useRef(false);
+  const router = useRouter();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -81,13 +83,16 @@ export default function ExerciseUploadForm({
           setError(null);
           setSuccess(true);
           
-          // Call success callback
+          // Call success callback if provided
           if (onSuccess) {
-            setTimeout(() => onSuccess(), 1000); // Small delay to show success message
+            onSuccess();
           }
           
-          // Hide success message after 3 seconds
-          setTimeout(() => setSuccess(false), 3000);
+          // Redirect after a short delay to show success message
+          setTimeout(() => {
+            router.push('/materials/form-exercise');
+          }, 1500);
+          
         } else {
           setError(result.error || `${isEditing ? 'Update' : 'Upload'} failed`);
           setSuccess(false);
@@ -97,6 +102,15 @@ export default function ExerciseUploadForm({
         setSuccess(false);
       }
     });
+  };
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      // Default behavior: redirect to form-exercise page
+      router.push('/materials/form-exercise');
+    }
   };
 
   return (
@@ -170,7 +184,7 @@ export default function ExerciseUploadForm({
         
         {success && (
           <div className="text-green-500 text-sm bg-green-50 dark:bg-green-900/20 p-3 rounded">
-            {isEditing ? 'Exercise updated successfully!' : 'Exercise uploaded successfully!'}
+            {isEditing ? 'Exercise updated successfully! Redirecting...' : 'Exercise uploaded successfully! Redirecting...'}
           </div>
         )}
         
@@ -189,15 +203,14 @@ export default function ExerciseUploadForm({
             {isPending ? (isEditing ? 'Updating...' : 'Uploading...') : (isEditing ? 'Update Exercise' : 'Upload Exercise')}
           </button>
           
-          {isEditing && onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={isPending}
+            className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
         </div>
       </form>
     </div>
