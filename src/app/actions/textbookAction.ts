@@ -71,3 +71,60 @@ export async function deleteTextbookAction(textbookId: string) {
     return { success: false, error: 'Failed to delete textbook' };
   }
 }
+
+export async function updateTextbookAction(formData: FormData) {
+  try {
+    const textbookId = formData.get('textbookId') as string;
+    const file = formData.get('file') as File;
+    const title = formData.get('title') as string;
+
+    if (!file || !title) {
+      return { success: false, error: 'Missing required fields' };
+    }
+
+    // Get existing notes data
+    const existingTextbook = await TextbookService.getById(textbookId);
+    if (!existingTextbook) {
+      return { success: false, error: 'Textbook not found' };
+    }
+
+
+    let updateData: any = {
+      title: title.trim(),
+      updatedAt: new Date(),
+    };
+    
+    // If a new file is uploaded, handle file upload and update file-related fields
+    if (file && file.size > 0) {
+      // Validate file
+      if (file.type !== 'application/pdf') {
+        return { success: false, error: 'Please upload a PDF file' };
+      }
+    
+      const maxSize = 50 * 1024 * 1024; // 50MB
+      if (file.size > maxSize) {
+        return { success: false, error: 'File size must be less than 50MB' };
+      }
+    
+      // Upload new file to Cloudinary
+      const newPdfUrl = await uploadTextbookToCloudinary(file);
+   
+      updateData = {
+        ...updateData,
+        fileName: file.name,
+        fileSize: file.size,
+        pdfUrl: newPdfUrl,
+      };
+    }
+
+    await TextbookService.update(textbookId, updateData);
+
+    // Revalidate the page to show updated data
+    revalidatePath('/material/form-textbook');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Update failed:', error);
+    return { success: false, error: 'Update failed' };
+  }
+}

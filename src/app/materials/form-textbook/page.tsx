@@ -4,6 +4,7 @@ import { ShowcaseSection } from "@/components/Layouts/showcase-section";
 import TextbookList from "@/components/TextbookList";
 import TextbookUploadForm from "@/components/TextbookUploadForm";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Textbook Upload",
@@ -16,17 +17,18 @@ export default async function TextbookPage() {
 
   return (
     <>
-      <Breadcrumb pageName="Textbook" />
-      
-      <div className="w-full space-y-6">
-        {/* Upload Form - Client Component */}
-        <ShowcaseSection title="Upload Textbook" className="space-y-5.5 !p-6.5">
-          <TextbookUploadForm />
-        </ShowcaseSection>
-
-        {/* Textbook List - Server Component with Client interactions */}
-        <TextbookList initialTextbooks={initialTextbooks} />
-      </div>
+      <Breadcrumb pageName="Textbook" />  
+        <div className="mb-6 flex justify-end">
+          <Link 
+            href="/materials/form-textbook/create"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-3 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+          >
+            + Create Textbook
+          </Link>
+        </div>
+        <div className="w-full space-y-6">
+          <TextbookList initialTextbooks={initialTextbooks} />
+        </div>
     </>
   );
 }

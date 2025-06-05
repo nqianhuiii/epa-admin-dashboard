@@ -27,9 +27,6 @@ export default function NotesUploadForm({
   const [isPending, startTransition] = useTransition();
   const formInitialized = useRef(false);
 
-  // No longer needed with direct initialization
-  // useEffect removed
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {

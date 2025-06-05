@@ -89,18 +89,26 @@ export class NotesService {
 
   static async update(
     id: string, 
-    updateData: Partial<Omit<NotesData, 'id' | 'uploadedAt'>>
+    updateData: Partial<Omit<NotesData, 'id'>>
   ): Promise<void> {
     try {
       const notesRef = doc(db, 'notes', id);
+
+      // Prepare the document data with proper Firestore types
+      const docData: Record<string, any> = {};
       
-      // Convert Date objects to Timestamps for Firestore
-      const docData: any = { ...updateData };
+      // Copy all fields except uploadedAt
+      Object.keys(updateData).forEach(key => {
+        if (key !== 'uploadedAt') {
+          docData[key] = updateData[key as keyof typeof updateData];
+        }
+      });
       
-      if (docData.updatedAt && docData.updatedAt instanceof Date) {
-        docData.updatedAt = Timestamp.fromDate(docData.updatedAt);
+      // Handle uploadedAt conversion separately
+      if (updateData.uploadedAt) {
+        docData.uploadedAt = Timestamp.fromDate(updateData.uploadedAt);
       }
-      
+          
       await updateDoc(notesRef, docData);
     } catch (error) {
       console.error('Failed to update notes:', error);
