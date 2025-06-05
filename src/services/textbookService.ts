@@ -9,7 +9,8 @@ import {
   getDoc,
   orderBy, 
   query,
-  Timestamp 
+  Timestamp, 
+  updateDoc
 } from 'firebase/firestore';
 import { TextbookData } from "@/types/types";
 
@@ -25,6 +26,7 @@ export class TextbookService {
         id: doc.id,
         ...doc.data(),
         uploadedAt: doc.data().uploadedAt.toDate(),
+        updatedAt: doc.data().updatedAt?.toDate() || "", 
       })) as TextbookData[];
     } catch (error) {
       console.error('Failed to fetch textbooks:', error);
@@ -84,4 +86,31 @@ export class TextbookService {
       throw new Error('Failed to fetch textbook');
     }
   }
+
+static async update(id: string, updateData: Partial<Omit<TextbookData, 'id'>>): Promise<void> {
+  try {
+    const textbookRef = doc(db, 'textbooks', id);
+    
+    // Prepare the document data with proper Firestore types
+    const docData: Record<string, any> = {};
+    
+    // Copy all fields except uploadedAt
+    Object.keys(updateData).forEach(key => {
+      if (key !== 'uploadedAt') {
+        docData[key] = updateData[key as keyof typeof updateData];
+      }
+    });
+    
+    // Handle uploadedAt conversion separately
+    if (updateData.uploadedAt) {
+      docData.uploadedAt = Timestamp.fromDate(updateData.uploadedAt);
+    }
+    
+    await updateDoc(textbookRef, docData);
+  } catch (error) {
+    console.error('Failed to update textbook:', error);
+    throw new Error('Failed to update textbook');
+  }
+}
+
 }

@@ -25,7 +25,7 @@ export class NotesService {
         id: doc.id,
         ...doc.data(),
         uploadedAt: doc.data().uploadedAt.toDate(),
-        updatedAt: doc.data().updatedAt?.toDate() || new Date(), 
+        updatedAt: doc.data().updatedAt?.toDate() || "", 
 
       })) as NotesData[];
     } catch (error) {

@@ -1,22 +1,21 @@
 "use client";
 
-import { TrashIcon } from "@/assets/icons";
-import { deletePastYearAction } from "@/app/actions/pastYearAction";
-import { useState, useTransition } from "react";
+import { deleteExerciseAction} from "@/app/actions/exerciseAction";
 import { ToastAlert } from "@/components/ui-elements/alert/toast-alert";
+import { useState, useTransition } from "react";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
-interface DeletePastYearFormProps {
-  pastYearId: string;
-  pastYearTitle: string;
+interface DeleteExerciseFormProps {
+  exerciseId: string;
+  exerciseTitle: string;
   fileName: string;
 }
 
-export function DeletePastYearForm({ 
-  pastYearId, 
-  pastYearTitle, 
+export function DeleteExerciseForm({ 
+  exerciseId, 
+  exerciseTitle, 
   fileName 
-}: DeletePastYearFormProps) {
+}: DeleteExerciseFormProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [toast, setToast] = useState<{
     isOpen: boolean;
@@ -33,21 +32,21 @@ export function DeletePastYearForm({
 
   const handleDelete = () => {
     startTransition(async () => {
-      const result = await deletePastYearAction(pastYearId);
+      const result = await deleteExerciseAction(exerciseId);
       if (result.success) {
         setShowConfirm(false);
         setToast({
           isOpen: true,
           variant: "success",
           title: "Success",
-          description: `Past year "${fileName}" has been deleted successfully.`
+          description: `Exercise "${fileName}" has been deleted successfully.`
         });
       } else {
         setToast({
           isOpen: true,
           variant: "error",
           title: "Error",
-          description: result.error || "Failed to delete past year"
+          description: result.error || "Failed to delete exercise"
         });
       }
     });
@@ -62,7 +61,7 @@ export function DeletePastYearForm({
       <button
         onClick={() => setShowConfirm(true)}
         disabled={isPending}
-        className="bg-red-500 text-white px-4 py-2 rounded text-sm hover:bg-red-600 transition-colors disabled:opacity-50"
+        className="bg-white text-red-500 border border-red-500 px-4 py-2 rounded text-sm font-medium hover:bg-red-500 hover:text-white transition-colors"
       >
         {isPending ? 'Deleting...' : 'Delete'}
       </button>
@@ -71,11 +70,11 @@ export function DeletePastYearForm({
         isOpen={showConfirm}
         onClose={() => setShowConfirm(false)}
         onConfirm={handleDelete}
-        title="Delete Past Year"
-        message="Are you sure you want to delete past year"
-        itemName={pastYearTitle}
+        title="Delete Exercise"
+        message="Are you sure you want to delete exercise"
+        itemName={exerciseTitle}
         isLoading={isPending}
-        confirmText="Delete Past Year"
+        confirmText="Delete Exercise"
       />
 
       <ToastAlert

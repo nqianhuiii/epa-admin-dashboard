@@ -15,17 +15,17 @@ export default async function NotesPage() {
   return (
     <>
       <Breadcrumb pageName="Notes" />
-        <div className="mb-6 flex justify-end">
-            <Link 
-                href="/materials/form-notes/create"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-3 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
-            >
-                + Create Notes
-            </Link>
-        </div>
-        <div className="w-full space-y-6">
-            <NotesList initialNotes={initialNotes} />
-        </div>
+      <div className="mb-6 flex justify-end">
+        <Link 
+          href="/materials/form-notes/create"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-3 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10"
+        >
+          + Create Notes
+        </Link>
+      </div>
+      <div className="w-full space-y-6">
+        <NotesList initialNotes={initialNotes} />
+      </div>
     </>
   );
 }

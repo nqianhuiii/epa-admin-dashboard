@@ -49,7 +49,14 @@ export default function NotesItem({ notes, onEditClick, onNotesUpdate }: NotesIt
             <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
               <p>File: {notes.fileName}</p>
               <p>Size: {formatFileSize(notes.fileSize)}</p>
-              <p>Uploaded: {formatDate(notes.uploadedAt)}</p>
+              <div className="text-body-sm text-dark-5 dark:text-dark-6">
+                Created: {formatDate(notes.uploadedAt)}
+                {notes.updatedAt && notes.updatedAt !== notes.uploadedAt && (
+                  <span className="ml-2">
+                    • Updated: {formatDate(notes.updatedAt)}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <a

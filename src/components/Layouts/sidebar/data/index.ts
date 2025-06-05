@@ -50,8 +50,8 @@ export const NAV_DATA = [
 
           },
           {
-            title: "Past Year Question",
-            url: "/materials/form-pastYear",
+            title: "Exercise",
+            url: "/materials/form-exercise",
             icon: Icons.PastYearIcon,
 
           },

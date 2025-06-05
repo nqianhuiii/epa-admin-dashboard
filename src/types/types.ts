@@ -5,6 +5,7 @@ export interface TextbookData {
   fileName: string;
   fileSize: number;
   uploadedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface NotesData {
@@ -18,13 +19,18 @@ export interface NotesData {
   updatedAt?: Date;
 }
 
-export interface PastYearData {
+export type ExerciseType = "pastYear" | "practice";
+
+export interface ExerciseData {
   id?: string;
+  type: ExerciseType;
   title: string;
+  chapter?:string;
   pdfUrl: string;
   fileName: string;
   fileSize: number;
   uploadedAt: Date;
+  updatedAt?: Date;
 }
 
 export interface StudySession {

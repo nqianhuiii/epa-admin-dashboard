@@ -46,7 +46,14 @@ export default function TextbookItem({ textbook, onEditClick, onTextbookUpdate }
             <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
               <p>File: {textbook.fileName}</p>
               <p>Size: {formatFileSize(textbook.fileSize)}</p>
-              <p>Uploaded: {formatDate(textbook.uploadedAt)}</p>
+              <div className="text-body-sm text-dark-5 dark:text-dark-6">
+                Created: {formatDate(textbook.uploadedAt)}
+                {textbook.updatedAt && textbook.updatedAt !== textbook.uploadedAt && (
+                  <span className="ml-2">
+                    • Updated: {formatDate(textbook.updatedAt)}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <a
