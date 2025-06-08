@@ -38,6 +38,7 @@ export interface StudySession {
   title: string;
   description: string;
   date: string;
+  startTime: string;
   meetingLink: string;
   teacherName: string;
   createdAt: string;
@@ -55,5 +56,55 @@ export interface CreateStudySessionInput {
 export interface UpdateStudySessionInput extends CreateStudySessionInput {
   id: string;
 }
+
+export interface Flashcard {
+  id: number;
+  term: string;
+  definition: string;
+}
+
+export interface FlashcardSet {
+  id: string;
+  title: string;
+  description: string;
+  cards: Flashcard[];
+  uploadedAt: Date;
+  updatedAt?: Date;
+}
+
+export interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correctAnswer: number; // Index of the correct option
+  explanation?: string; 
+}
+
+export interface QuizSet {
+  id: string;
+  title: string;
+  description: string;
+  questions: QuizQuestion[];
+  timeLimit?: number; 
+  passingScore?: number;
+  shuffleQuestions?: boolean; 
+  uploadedAt: Date;
+  updatedAt?: Date;
+}
+
+// Alternative interface if you want to support different question types
+// export interface QuizQuestionAlternative {
+//   id: number;
+//   question: string;
+//   type: 'multiple-choice' | 'true-false' | 'fill-in-blank';
+//   options?: string[]; // For multiple choice
+//   correctAnswer: string | number; // Can be index for MC, boolean for T/F, string for fill-in
+//   explanation?: string;
+// }
+
+
+
+
+
 
 

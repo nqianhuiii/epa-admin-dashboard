@@ -68,6 +68,12 @@ export const NAV_DATA = [
         url: "/flashcard",
         icon: Icons.FlashcardIcon,
         items: [],
+      }, 
+      {
+        title: "Quiz",
+        url: "/quiz",
+        icon: Icons.QuizIcon,
+        items: [],
       },      
       // {
       //   title: "Calendar",

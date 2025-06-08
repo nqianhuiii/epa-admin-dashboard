@@ -44,7 +44,7 @@ export function TextAreaGroup({
         <textarea
           id={id}
           name={name}
-          rows={6}
+          rows={5}
           placeholder={placeholder}
           defaultValue={defaultValue}
           value={value}
