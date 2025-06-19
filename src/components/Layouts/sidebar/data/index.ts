@@ -4,17 +4,17 @@ export const NAV_DATA = [
   {
     label: "MAIN MENU",
     items: [
-      {
-        title: "Dashboard",
-        icon: Icons.HomeIcon,
-        items: [
-          {
-            title: "eCommerce",
-            url: "/",
-            icon: Icons.HomeIcon,
-          },
-        ],
-      },
+      // {
+      //   title: "Dashboard",
+      //   icon: Icons.HomeIcon,
+      //   items: [
+      //     {
+      //       title: "eCommerce",
+      //       url: "/",
+      //       icon: Icons.HomeIcon,
+      //     },
+      //   ],
+      // },
       {
         title: "Users",
         url: "/users",

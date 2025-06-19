@@ -46,9 +46,9 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   return (
     <>
-      <span className="mb-1.5 block font-medium">Start for free</span>
+      <span className="mb-1.5 block font-medium">EPA Admin Dashboard</span>
       <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-        Sign In to TailAdmin
+        Sign In 
       </h2>
 
       <form onSubmit={handleSubmit}>
@@ -93,7 +93,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div className="relative">
             <input
               type="password"
-              placeholder="6+ Characters, 1 Capital letter"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -139,13 +139,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               </label>
             </div>
             
-            <button
+            {/* <button
               type="button"
               className="text-sm text-primary hover:underline"
               onClick={() => alert('Contact administrator for password reset')}
             >
               Forgot Password?
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -164,7 +164,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           />
         </div>
 
-        <button
+        {/* <button
           type="button"
           className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50"
           onClick={() => alert('Google sign-in not available for admin panel')}
@@ -203,7 +203,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             </svg>
           </span>
           Sign in with Google
-        </button>
+        </button> */}
       </form>
     </>
   );
