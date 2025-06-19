@@ -1,4 +1,3 @@
-import { TrashIcon } from "@/assets/icons";
 import {
   Table,
   TableBody,
@@ -8,11 +7,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import dayjs from "dayjs";
-import { DownloadIcon, PreviewIcon } from "./icons";
 import Image from "next/image";
 
-import { AppUser } from "@/services/userSercvice";
 import { DeleteUserForm } from "@/components/DeleteUserForm";
+import { AppUser } from "@/services/userSercvice";
 
 export async function UserTable({users}: {users: AppUser[]}) {
 

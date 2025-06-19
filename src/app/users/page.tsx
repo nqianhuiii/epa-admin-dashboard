@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { UserTable } from "@/components/Tables/user-table";
+import { UserTable } from "@/components/user-table";
 import { getAllUsers } from "@/services/userSercvice";
 // import { TopChannels } from "@/components/Tables/top-channels";
 // import { TopChannelsSkeleton } from "@/components/Tables/top-channels/skeleton";
@@ -7,7 +7,6 @@ import { getAllUsers } from "@/services/userSercvice";
 // import { TopProductsSkeleton } from "@/components/Tables/top-products/skeleton";
 
 import { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Users",

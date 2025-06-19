@@ -9,13 +9,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import dayjs from "dayjs";
-import { PreviewIcon } from "./icons";
+import { PreviewIcon } from "./Tables/icons";
 
-import { TrashIcon } from "@/assets/icons";
 import { AppPost } from "@/services/forumService";
 import { useState } from "react";
-import PostModal from "../PostModal";
-import { DeleteForumForm } from "../DeleteForumForm";
+import { DeleteForumForm } from "./DeleteForumForm";
+import PostModal from "./PostModal";
 
 export function ForumTable({posts}: {posts: AppPost[]}) {
   const [openModal, setOpenModal] = useState(false);

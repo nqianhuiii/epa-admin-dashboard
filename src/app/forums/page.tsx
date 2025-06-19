@@ -1,5 +1,5 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
-import { ForumTable } from "@/components/Tables/forum-table";
+import { ForumTable } from "@/components/forum-table";
 import { getAllPosts } from "@/services/forumService";
 import { Metadata } from "next";
 
