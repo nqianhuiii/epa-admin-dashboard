@@ -61,21 +61,15 @@ export async function UserTable({users}: {users: AppUser[]}) {
 
               <TableCell className="xl:pr-7.5">
                 <div className="flex items-center justify-end gap-x-3.5">
-                  <button className="hover:text-primary">
-                    <span className="sr-only">View Invoice</span>
+                  {/* <button className="hover:text-primary">
+                    <span className="sr-only">View User</span>
                     <PreviewIcon />
-                  </button>
+                  </button> */}
 
                   <DeleteUserForm
                     userId={item.id}
                     userName={item.fullName}
                   />
-
-                  {/* edit ?  */}
-                  {/* <button className="hover:text-primary">
-                    <span className="sr-only">Download Invoice</span>
-                    <DownloadIcon />
-                  </button> */}
                 </div>
               </TableCell>
             </TableRow>

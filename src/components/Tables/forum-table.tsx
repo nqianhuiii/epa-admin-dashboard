@@ -15,6 +15,7 @@ import { TrashIcon } from "@/assets/icons";
 import { AppPost } from "@/services/forumService";
 import { useState } from "react";
 import PostModal from "../PostModal";
+import { DeleteForumForm } from "../DeleteForumForm";
 
 export function ForumTable({posts}: {posts: AppPost[]}) {
   const [openModal, setOpenModal] = useState(false);
@@ -88,10 +89,13 @@ export function ForumTable({posts}: {posts: AppPost[]}) {
                     <span className="sr-only">View Post</span>
                     <PreviewIcon />
                   </button>
-                  <button className="hover:text-primary">
+                  {/* <button className="hover:text-primary">
                     <span className="sr-only">Delete Post</span>
                     <TrashIcon />
-                  </button>
+                  </button> */}
+                  <DeleteForumForm
+                    postId={item.id}
+                  />
                 </div>
               </TableCell>
             </TableRow>

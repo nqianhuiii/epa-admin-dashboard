@@ -38,8 +38,9 @@ export interface StudySession {
   title: string;
   description: string;
   date: string;
-  startTime: string;
+  time: string;
   meetingLink: string;
+  tutorImage: string | File | null;
   teacherName: string;
   createdAt: string;
   updatedAt: string;
@@ -51,6 +52,8 @@ export interface CreateStudySessionInput {
   date: string;
   meetingLink: string;
   teacherName: string;
+  tutorImage: string | File | null; 
+  time: string;
 }
 
 export interface UpdateStudySessionInput extends CreateStudySessionInput {

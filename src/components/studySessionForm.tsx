@@ -7,15 +7,15 @@ import { TextAreaGroup } from "./FormElements/InputGroup/text-area";
 import { StudySession, CreateStudySessionInput } from "@/types/types";
 import DatePickerOne from "./FormElements/DatePicker/DatePickerOne";
 import { useRouter } from "next/navigation";
-import { TimePicker } from 'rsuite';
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { IonIcon } from '@ionic/react';
-import { cloudUploadOutline, imageOutline, closeOutline } from 'ionicons/icons';
+import { cloudUploadOutline, closeOutline } from 'ionicons/icons';
 
-interface ExtendedStudySessionInput extends CreateStudySessionInput {
-  startTime: string;
-  tutorImage?: File | null;
-}
+// interface ExtendedStudySessionInput extends CreateStudySessionInput {
+//   time: string;
+//   tutorImage?: File | null;
+// }
 
 interface StudySessionFormProps {
   session?: StudySession;
@@ -35,17 +35,31 @@ export default function StudySessionForm({
     text: string;
   } | null>(null);
 
-  const [formData, setFormData] = useState<ExtendedStudySessionInput>({
+  const [formData, setFormData] = useState<CreateStudySessionInput>({
     title: session?.title || "",
     description: session?.description || "",
     date: session?.date || "",
-    startTime: session?.startTime || "",
+    time: session?.time || "",
     meetingLink: session?.meetingLink || "",
     teacherName: session?.teacherName || "",
-    tutorImage: null,
+    tutorImage: session?.tutorImage || "",
   });
 
+  // Convert time string to Date object for initial picker value
+  const getTimeValue = (timeString: string): Date | null => {
+    if (!timeString) return null;
+    const today = new Date();
+    const [hours, minutes] = timeString.split(':').map(Number);
+    if (!isNaN(hours) && !isNaN(minutes)) {
+      const date = new Date(today);
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    }
+    return null;
+  };
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -65,39 +79,31 @@ export default function StudySessionForm({
     setFormData((prev) => ({ ...prev, date: dateStr }));
   };
 
-  // Updated handler for rsuite TimePicker - receives Date object
-  const handleTimeChange = (value: Date | null) => {
-    if (value) {
-      // Format the time as HH:mm or hh:mm aa depending on your preference
-      const timeString = value.toLocaleTimeString('en-US', { 
-        hour12: false, // Set to true if you want 12-hour format
-        hour: '2-digit', 
-        minute: '2-digit' 
-      });
-      setFormData((prev) => ({ ...prev, startTime: timeString }));
+  const handleTimeChange = (time: Date | null) => {
+    setSelectedTime(time);
+    if (time) {
+      const formattedTime = time.toTimeString().slice(0, 5); // HH:mm
+      setFormData((prev) => ({ ...prev, time: formattedTime }));
     } else {
-      setFormData((prev) => ({ ...prev, startTime: "" }));
+      setFormData((prev) => ({ ...prev, time: "" }));
     }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setMessage({ type: "error", text: "Please select a valid image file" });
         return;
       }
 
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setMessage({ type: "error", text: "Image size should be less than 5MB" });
         return;
       }
 
       setFormData((prev) => ({ ...prev, tutorImage: file }));
-      
-      // Create preview
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
@@ -109,25 +115,8 @@ export default function StudySessionForm({
   const removeImage = () => {
     setFormData((prev) => ({ ...prev, tutorImage: null }));
     setImagePreview(null);
-    // Reset file input
     const fileInput = document.getElementById('tutorImage') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
-  };
-
-  // Helper function to convert time string to Date object for TimePicker
-  const getTimeValue = (timeString: string): Date | null => {
-    if (!timeString) return null;
-    
-    const today = new Date();
-    const [hours, minutes] = timeString.split(':').map(Number);
-    
-    if (!isNaN(hours) && !isNaN(minutes)) {
-      const date = new Date(today);
-      date.setHours(hours, minutes, 0, 0);
-      return date;
-    }
-    
-    return null;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -139,7 +128,6 @@ export default function StudySessionForm({
       let result;
 
       if (session) {
-        // Update existing session
         result = await updateStudySession({ id: session.id, ...formData });
       } else {
         result = await createStudySession(formData);
@@ -149,25 +137,19 @@ export default function StudySessionForm({
         setMessage({ type: "success", text: result.message });
 
         if (!session) {
-          // Reset form for new session creation
           setFormData({
             title: "",
             description: "",
             date: "",
-            startTime: "",
+            time: "",
             meetingLink: "",
             teacherName: "",
             tutorImage: null,
           });
+          setSelectedTime(null);
           setImagePreview(null);
-
-          // Reset date picker
-          const picker = document.querySelector(".form-datepicker") as any;
-          if (picker && picker._flatpickr) {
-            picker._flatpickr.clear();
-          }
         }
-
+        
         if (onSuccess) {
           setTimeout(() => {
             onSuccess();
@@ -175,7 +157,7 @@ export default function StudySessionForm({
         }
 
         router.push('/studySessions');
-        router.refresh(); 
+        router.refresh();
 
       } else if (result) {
         setMessage({ type: "error", text: result.message });
@@ -234,19 +216,20 @@ export default function StudySessionForm({
         </div>
 
         <div className="space-y-5">
-          {/* Updated TimePicker using rsuite TimePicker */}
           <div>
             <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
               Start Time
             </label>
-            <TimePicker
-              format="HH:mm" // 24-hour format, use "hh:mm aa" for 12-hour
-              showMeridiem={false} // Set to true if using 12-hour format
-              value={getTimeValue(formData.startTime)}
+            <DatePicker
+              selected={selectedTime}
               onChange={handleTimeChange}
-              placeholder="Select time"
-              style={{ width: '100%' }}
-              size="lg"
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              timeCaption="Time"
+              dateFormat="HH:mm"
+              placeholderText="Select time"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
@@ -270,7 +253,6 @@ export default function StudySessionForm({
             required
           />
 
-          {/* Updated Tutor Image Upload with square preview */}
           <div>
             <label className="mb-3 block text-body-sm font-medium text-dark dark:text-white">
               Tutor Picture
@@ -283,12 +265,8 @@ export default function StudySessionForm({
                 >
                   <div className="text-center">
                     <IonIcon icon={cloudUploadOutline} className="mx-auto mb-2 size-8 text-gray-5" />
-                    <p className="text-sm text-gray-5">
-                      Click to upload tutor image
-                    </p>
-                    <p className="text-xs text-gray-4 mt-1">
-                      PNG, JPG, GIF up to 5MB
-                    </p>
+                    <p className="text-sm text-gray-5">Click to upload tutor image</p>
+                    <p className="text-xs text-gray-4 mt-1">PNG, JPG, GIF up to 5MB</p>
                   </div>
                 </label>
               ) : (
@@ -325,25 +303,21 @@ export default function StudySessionForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center rounded-[7px] bg-primary px-6 py-3 text-center font-medium text-white hover:bg-opacity-90 disabled:bg-opacity-50 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center rounded-[7px] bg-primary px-6 py-3 text-center font-medium text-white hover:bg-opacity-90 disabled:bg-opacity-50 disabled:cursor-not-allowed mt-8 mb-9"
         >
           {isSubmitting ? (
             <div className="flex items-center gap-2">
               <div className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
               {session ? "Updating..." : "Creating..."}
             </div>
-          ) : session ? (
-            "Update Session"
-          ) : (
-            "Create Session"
-          )}
+          ) : session ? "Update Session" : "Create Session"}
         </button>
 
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex items-center justify-center rounded-[7px] border border-stroke px-6 py-3 text-center font-medium text-dark hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-white dark:hover:border-primary"
+            className="inline-flex items-center justify-center rounded-[7px] border border-stroke px-6 py-3 text-center font-medium text-dark hover:border-primary hover:bg-primary hover:text-white dark:border-dark-3 dark:text-white dark:hover:border-primary mt-8 mb-9"
           >
             Cancel
           </button>

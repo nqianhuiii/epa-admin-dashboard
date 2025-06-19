@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { StudySessionsService } from "@/services/studySessionService";
 import { StudySession, CreateStudySessionInput, UpdateStudySessionInput } from "@/types/types";
 import { validateStudySessionInput } from "@/utils/formValidation";
+import { uploadTutorPicToCloudinary } from "@/services/cloudinaryServer";
 
 // Response types for actions
 interface ActionResponse<T = undefined> {
@@ -46,9 +47,47 @@ export async function createStudySession(input: CreateStudySessionInput): Promis
       return { success: false, message: validationError };
     }
 
-    // Create study session using service
+    let pictureUrl = '';
+    
+    // If picture file is provided, upload it first
+    if (input.tutorImage && typeof input.tutorImage !== "string") {
+      // Validate picture file
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowedTypes.includes((input.tutorImage as File).type)) {
+        return { 
+          success: false, 
+          message: 'Please upload a valid image file (JPEG, PNG, WebP, or GIF)' 
+        };
+      }
+      
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if ((input.tutorImage as File).size > maxSize) {
+        return { 
+          success: false, 
+          message: 'Image file size must be less than 10MB' 
+        };
+      }
+      
+      // Upload to Cloudinary
+      try {
+        pictureUrl = await uploadTutorPicToCloudinary(input.tutorImage as File);
+        input.tutorImage = pictureUrl;
+      } catch (uploadError) {
+        console.error("Error uploading picture:", uploadError);
+        return { 
+          success: false, 
+          message: 'Failed to upload picture. Please try again.' 
+        };
+      }
+    }
+
+    // Create study session using service with picture URL
     const service = new StudySessionsService();
-    const newSession = await service.createStudySession(input);
+    const inputWithPictureUrl = {
+      ...input,
+      pictureUrl,
+    };
+    const newSession = await service.createStudySession(inputWithPictureUrl);
 
     // Revalidate the page to show updated data
     revalidatePath("/study-sessions");
@@ -66,7 +105,6 @@ export async function createStudySession(input: CreateStudySessionInput): Promis
     };
   }
 }
-
 // Update study session
 export async function updateStudySession(input: UpdateStudySessionInput): Promise<ActionResponse<StudySession>> {
   try {

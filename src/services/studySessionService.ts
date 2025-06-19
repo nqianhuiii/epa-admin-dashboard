@@ -25,6 +25,8 @@ function convertFirebaseDocToStudySession(doc: any): StudySession {
     date: data.date,
     meetingLink: data.meetingLink,
     teacherName: data.teacherName,
+    tutorImage: data.tutorImage,
+    time: data.time,
     createdAt: data.createdAt instanceof Timestamp 
       ? data.createdAt.toDate().toISOString() 
       : data.createdAt,
@@ -78,10 +80,13 @@ export class StudySessionsService {
         date: input.date,
         meetingLink: input.meetingLink.trim(),
         teacherName: input.teacherName.trim(),
+        tutorImage: input.tutorImage ?? '',
+        time: input.time.trim(),
         createdAt: now,
         updatedAt: now,
       };
 
+      console.log("Creating study session with data:", docData);
       const docRef = await addDoc(this.collectionRef, docData);
       
       // Fetch the created document to return with proper timestamps

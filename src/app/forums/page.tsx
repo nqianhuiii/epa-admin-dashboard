@@ -12,7 +12,7 @@ const TablesPage = async() => {
   const posts = await getAllPosts();
   return (
     <>
-      <Breadcrumb pageName="Users" />
+      <Breadcrumb pageName="Forum" />
 
       <div className="space-y-10">
         <ForumTable posts= {posts} />

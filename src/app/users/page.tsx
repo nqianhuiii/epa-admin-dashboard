@@ -21,14 +21,6 @@ const TablesPage = async() => {
       <Breadcrumb pageName="Users" />
 
       <div className="space-y-10">
-        {/* <Suspense fallback={<TopChannelsSkeleton />}>
-          <TopChannels />
-        </Suspense> */}
-{/*         
-        <Suspense fallback={<TopProductsSkeleton />}>
-          <TopProducts />
-        </Suspense> */}
-
         <UserTable users= {users} />
       </div>
     </>
