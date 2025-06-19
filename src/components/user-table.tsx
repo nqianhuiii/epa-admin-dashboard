@@ -9,7 +9,7 @@ import {
 import dayjs from "dayjs";
 import Image from "next/image";
 
-=import { DeleteUserForm } from "./DeleteUserForm";
+import { DeleteUserForm } from "./DeleteUserForm";
 import { AppUser } from "@/services/userSercvice";
 
 export async function UserTable({users}: {users: AppUser[]}) {
