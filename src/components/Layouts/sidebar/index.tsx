@@ -70,7 +70,7 @@ export function Sidebar() {
               onClick={() => isMobile && toggleSidebar()}
               className="px-0 py-2.5 min-[850px]:py-0"
             >
-             </Link>
+             </Link>
 
             {isMobile && (
               <button
@@ -158,12 +158,12 @@ export function Sidebar() {
                             </div>
                           </div>
                         ) : (
+                          // Fixed: Add proper type checking and fallback
                           (() => {
-                            const href =
-                              "url" in item
-                                ? item.url + ""
-                                : "/" +
-                                  item.title.toLowerCase().split(" ").join("-");
+                            // Use the url if it exists, otherwise generate from title
+                            const href = 'url' in item && item.url 
+                              ? item.url 
+                              : "/" + item.title.toLowerCase().split(" ").join("-");
 
                             return (
                               <MenuItem
