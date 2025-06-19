@@ -7,17 +7,23 @@ export async function POST(request) {
 
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
+
   console.log('Admin Email from env:', adminEmail);
   console.log('Admin Password Hash from env:', adminPasswordHash ? 'Hash loaded' : 'Hash NOT loaded');
+  console.log('JWT_SECRET loaded:', !!jwtSecret);
   console.log('Received email:', email);
+  
 
   if (!email || !password) {
     return NextResponse.json({ message: 'Missing email or password' }, { status: 400 });
   }
 
   // ✅ Compare email and hashed password
-  const emailMatch = email === adminEmail;
+ const emailMatch = email === adminEmail;
+  console.log('Email match:', emailMatch);
+  
   const passwordMatch = await bcrypt.compare(password, adminPasswordHash);
+  console.log('Password match:', passwordMatch);
 
   if (emailMatch && passwordMatch) {
     const token = jwt.sign({ email }, process.env.JWT_SECRET, {
