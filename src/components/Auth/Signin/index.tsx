@@ -204,19 +204,6 @@ const handleSubmit = async (e: React.FormEvent) => {
           </span>
           Sign in with Google
         </button>
-
-        <div className="mt-6 text-center">
-          <p>
-            Don't have an account?{" "}
-            <button 
-              type="button"
-              onClick={() => alert('Contact administrator for account access')}
-              className="text-primary hover:underline"
-            >
-              Contact Administrator
-            </button>
-          </p>
-        </div>
       </form>
     </>
   );

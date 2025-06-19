@@ -36,7 +36,7 @@ export function DeleteConfirmationModal({
         <p className="text-gray-600 dark:text-gray-300 mb-6">
           {message}
           {itemName && (
-            <span className="font-medium"> "{itemName}"</span>
+          <span className="font-medium"> &quot;{itemName}&quot;</span>
           )}
           ? This action cannot be undone.
         </p>

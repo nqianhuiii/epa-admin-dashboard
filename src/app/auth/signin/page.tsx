@@ -12,7 +12,7 @@ export default function SignInPage() {
     if (!isLoading && isAuthenticated) {
       router.push('/users');
     }
-  }, [isAuthenticated, isLoading]);
+  }, [isAuthenticated, isLoading, router]);
 
   if (!isLoading && isAuthenticated) {
     return null; // Prevent flicker
