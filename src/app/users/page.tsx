@@ -3,6 +3,8 @@ import { UserTable } from "@/components/user-table";
 import { getAllUsers } from "@/services/userSercvice";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'; 
+
 export const metadata: Metadata = {
   title: "Users",
 };

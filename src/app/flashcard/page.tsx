@@ -5,7 +5,7 @@ import FlashcardsList from "@/components/FlashcardList";
 import { FlashcardSet } from "@/types/types";
 import { getAllFlashcardsAction } from "../actions/flashcardAction";
 
-export const dynamic = 'force-dynamic'; // Add this line
+export const dynamic = 'force-dynamic'; 
 
 export const metadata: Metadata = {
   title: "Flashcard Sets",

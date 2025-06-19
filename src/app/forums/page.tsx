@@ -3,6 +3,8 @@ import { ForumTable } from "@/components/forum-table";
 import { getAllPosts } from "@/services/forumService";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic'; 
+
 export const metadata: Metadata = {
   title: "Forum",
 };

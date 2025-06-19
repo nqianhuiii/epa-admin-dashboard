@@ -10,6 +10,8 @@ import { Wand2 } from "lucide-react";
 // import { getAllFlashcardsAction } from "../actions/flashcardAction";
 // import { getFlashcards } from "../actions/flashcardActions"; // Uncomment when you have this function
 
+export const dynamic = 'force-dynamic'; 
+
 export const metadata: Metadata = {
   title: "Quiz Sets",
   description: "Create and manage your quiz sets"

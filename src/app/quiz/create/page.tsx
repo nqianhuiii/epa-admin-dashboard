@@ -4,6 +4,8 @@ import QuizForm from "@/components/QuizForm";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic'; 
+
 export const metadata: Metadata = {
   title: "Create Quiz",
   description: "Create a new quiz set"

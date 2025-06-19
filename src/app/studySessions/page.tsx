@@ -3,8 +3,10 @@ import type { Metadata } from "next";
 import { getStudySessions } from "../actions/studySessionActions";
 import StudySessionsList from "@/components/studySessionsList";
 import Link from "next/link";
-export const metadata: Metadata = {
 
+export const dynamic = 'force-dynamic'; 
+
+export const metadata: Metadata = {
   title: "Study Sessions",
   description: "Create and manage study sessions"
 };

@@ -7,6 +7,8 @@ import { QuizSet } from '@/types/types';
 import { ShowcaseSection } from '@/components/Layouts/showcase-section';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic'; 
+
 export default function GenerateQuizPage() {
   const [generatedQuizData, setGeneratedQuizData] = useState<QuizSet | null>(null);
 
