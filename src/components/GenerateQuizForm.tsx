@@ -1,30 +1,28 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import { createQuizSetAction } from '@/app/actions/quizAction';
 import { cn } from "@/lib/utils";
-import InputGroup from './FormElements/InputGroup';
-import { createQuizSetAction, updateQuizSetAction } from '@/app/actions/quizAction';
 import { QuizSet } from '@/types/types';
 import { validateQuizSetInput, ValidationErrors } from '@/utils/formValidation';
+import { Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import InputGroup from './FormElements/InputGroup';
 
-interface QuizFormProps {
-  quizset?: QuizSet;
+interface GeneratedQuizFormProps {
+  generatedQuizData: QuizSet;
   onSuccess?: () => void;
   onCancel?: () => void;
-  isEditing?: boolean;
-  isViewOnly?: boolean;
+  onRegenerate?: () => void;
 }
 
-export default function QuizForm({
-  quizset,
+export default function GeneratedQuizForm({
+  generatedQuizData,
   onSuccess,
   onCancel,
-  isEditing = false,
-  isViewOnly = false,
-}: QuizFormProps) {
+  onRegenerate,
+}: GeneratedQuizFormProps) {
   const router = useRouter();
-  const [quizSet, setQuizSet] = useState({
+  const [quizSet, setQuizSet] = useState<QuizSet>({
     id: '',
     title: '',
     description: '',
@@ -43,22 +41,19 @@ export default function QuizForm({
   const [successMessage, setSuccessMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState<ValidationErrors>({});
 
-  // Initialize form with quiz data if editing or viewing
+  // Initialize form with generated quiz data
   useEffect(() => {
-    console.log("test output");
-    console.log("quizset received:", quizset);
-
-    if ((isEditing || isViewOnly) && quizset) {
+    if (generatedQuizData) {
       setQuizSet({
-        id: quizset.id || '',
-        title: quizset.title || '',
-        description: quizset.description || '',
-        timeLimit: quizset.timeLimit || 4,
-        passingScore: quizset.passingScore || 7,
-        shuffleQuestions: quizset.shuffleQuestions || false,
-        uploadedAt: quizset.uploadedAt || new Date(),
-        questions: quizset.questions && quizset.questions.length > 0 
-          ? quizset.questions.map((question, index) => ({
+        id: generatedQuizData.id || '',
+        title: generatedQuizData.title || '',
+        description: generatedQuizData.description || '',
+        timeLimit: generatedQuizData.timeLimit || 4,
+        passingScore: generatedQuizData.passingScore || 7,
+        shuffleQuestions: generatedQuizData.shuffleQuestions || false,
+        uploadedAt: generatedQuizData.uploadedAt || new Date(),
+        questions: generatedQuizData.questions && generatedQuizData.questions.length > 0 
+          ? generatedQuizData.questions.map((question, index) => ({
               id: question.id || index + 1,
               question: question.question || '',
               options: question.options || ['', '', '', ''],
@@ -71,17 +66,15 @@ export default function QuizForm({
             ]
       });
     }
-  }, [isEditing, isViewOnly, quizset]);
+  }, [generatedQuizData]);
 
   // Actions
   const handleSubmit = async () => {
-    if (isViewOnly) return;
-    
     setErrorMessage('');
     setSuccessMessage('');
     setFieldErrors({});
     
-    // Client-side validation using extracted validation function
+    // Client-side validation
     const validation = validateQuizSetInput(quizSet);
     
     if (!validation.isValid) {
@@ -95,29 +88,22 @@ export default function QuizForm({
     setIsSubmitting(true);
     
     try {
-      let result;
-      if (isEditing) {
-        result = await updateQuizSetAction(quizSet);
-      } else {
-        result = await createQuizSetAction(quizSet);
-      }
+      const result = await createQuizSetAction(quizSet);
       
       if (result.success) {
-        setSuccessMessage(result.message || 'Operation completed successfully!');
+        setSuccessMessage(result.message || 'Quiz created successfully!');
         if (onSuccess) {
           setTimeout(() => {
             onSuccess();
           }, 1500);
         }
-
         router.push('/quiz');
         router.refresh(); 
-
       } else {
         setErrorMessage(result.message || 'An error occurred. Please try again.');
       }
     } catch (error) {
-      console.error(`Error ${isEditing ? 'updating' : 'creating'} quiz set:`, error);
+      console.error('Error creating generated quiz:', error);
       setErrorMessage('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -125,8 +111,6 @@ export default function QuizForm({
   };
 
   const handleAddQuestion = () => {
-    if (isViewOnly) return;
-    
     const newQuestion = {
       id: Date.now(),
       question: '',
@@ -141,7 +125,7 @@ export default function QuizForm({
   };
 
   const handleDeleteQuestion = (questionId: number) => {
-    if (isViewOnly || quizSet.questions.length <= 1) return;
+    if (quizSet.questions.length <= 1) return;
     
     setQuizSet(prev => ({
       ...prev,
@@ -150,8 +134,6 @@ export default function QuizForm({
   };
 
   const handleUpdateQuestion = (questionId: number, field: 'question' | 'explanation', value: string) => {
-    if (isViewOnly) return;
-    
     if (errorMessage) {
       setErrorMessage('');
     }
@@ -172,8 +154,6 @@ export default function QuizForm({
   };
 
   const handleUpdateOption = (questionId: number, optionIndex: number, value: string) => {
-    if (isViewOnly) return;
-    
     if (errorMessage) {
       setErrorMessage('');
     }
@@ -202,8 +182,6 @@ export default function QuizForm({
   };
 
   const handleUpdateCorrectAnswer = (questionId: number, correctIndex: number) => {
-    if (isViewOnly) return;
-    
     // Clear correct answer error
     setFieldErrors(prev => {
       const newErrors = { ...prev };
@@ -220,8 +198,6 @@ export default function QuizForm({
   };
 
   const handleInputChange = (field: 'title' | 'description' | 'timeLimit' | 'passingScore' | 'shuffleQuestions', value: string | number | boolean) => {
-    if (isViewOnly) return;
-    
     if (errorMessage) {
       setErrorMessage('');
     }
@@ -238,6 +214,27 @@ export default function QuizForm({
 
   return (
     <div>
+      {/* Header with AI-generated badge */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3 ml-4">
+          <div className="px-3 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium rounded-full">
+            ✨ AI Generated
+          </div>
+          <span className="text-sm text-gray-600">
+            Review and customize your AI-generated quiz below
+          </span>
+        </div>
+        {onRegenerate && (
+          <button
+            onClick={onRegenerate}
+            className="flex items-center gap-2 px-4 py-2 mr-4 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            <RefreshCw className="w-4 h-4" />
+            Regenerate
+          </button>
+        )}
+      </div>
+
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-6">
         {/* Title */}
@@ -252,12 +249,9 @@ export default function QuizForm({
             onChange={(e) => handleInputChange('title', e.target.value)}
             className={cn(
               "w-full mt-3 rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary resize-none",
-              isViewOnly && "cursor-not-allowed bg-gray-100 disabled:bg-gray-2 dark:disabled:bg-dark",
               fieldErrors.title && "border-red-500 focus:border-red-500"
             )}
             rows={3}
-            readOnly={isViewOnly}
-            disabled={isViewOnly}
             required
           />
           {fieldErrors.title && (
@@ -277,12 +271,9 @@ export default function QuizForm({
             onChange={(e) => handleInputChange('description', e.target.value)}
             className={cn(
               "w-full mt-3 rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary resize-none",
-              isViewOnly && "cursor-not-allowed bg-gray-100 disabled:bg-gray-2 dark:disabled:bg-dark",
               fieldErrors.description && "border-red-500 focus:border-red-500"
             )}
             rows={3}
-            readOnly={isViewOnly}
-            disabled={isViewOnly}
             required
           />
           {fieldErrors.description && (
@@ -300,7 +291,6 @@ export default function QuizForm({
               placeholder="Enter time limit"
               value={quizSet.timeLimit?.toString() || ''}
               handleChange={(e) => handleInputChange('timeLimit', e.target.value ? parseInt(e.target.value) : 0)}
-              disabled={isViewOnly}
               required={true}
             />
             {fieldErrors.timeLimit && (
@@ -316,7 +306,6 @@ export default function QuizForm({
               placeholder="Enter passing score"
               value={quizSet.passingScore?.toString() || ''}
               handleChange={(e) => handleInputChange('passingScore', e.target.value ? parseInt(e.target.value) : 0)}
-              disabled={isViewOnly}
               required={true}
             />
             {fieldErrors.passingScore && (
@@ -331,8 +320,7 @@ export default function QuizForm({
                 type="checkbox"
                 checked={quizSet.shuffleQuestions}
                 onChange={(e) => handleInputChange('shuffleQuestions', e.target.checked)}
-                className={`mr-2 ${isViewOnly ? 'cursor-not-allowed' : ''}`}
-                disabled={isViewOnly}
+                className="mr-2"
               />
               <span className="text-sm font-medium text-gray-700">Shuffle Questions</span>
             </label>
@@ -342,29 +330,27 @@ export default function QuizForm({
         {/* Questions */}
         <div className="space-y-4">
           {quizSet.questions.map((question, index) => (
-            <div key={question.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div key={question.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
               {/* Question Header */}
-              <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-b border-gray-200">
+              <div className="flex items-center justify-between px-6 py-3 bg-gradient-to-r from-purple-100 to-blue-100 border-b border-gray-200">
                 <span className="text-sm font-medium text-gray-700">Question {index + 1}</span>
-                {!isViewOnly && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleAddQuestion}
-                      className="p-1 text-gray-400 hover:text-blue-600"
-                      title="Add question"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteQuestion(question.id)}
-                      className="p-1 text-gray-400 hover:text-red-600"
-                      title="Delete question"
-                      disabled={quizSet.questions.length <= 1}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleAddQuestion}
+                    className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                    title="Add question"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteQuestion(question.id)}
+                    className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                    title="Delete question"
+                    disabled={quizSet.questions.length <= 1}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               {/* Question Content */}
@@ -380,12 +366,9 @@ export default function QuizForm({
                     onChange={(e) => handleUpdateQuestion(question.id, 'question', e.target.value)}
                     className={cn(
                       "w-full text-lg rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary resize-none",
-                      isViewOnly && "cursor-not-allowed bg-gray-50 disabled:bg-gray-2 dark:disabled:bg-dark",
                       fieldErrors[`question_${question.id}`] && "border-red-500 focus:border-red-500"
                     )}
                     rows={2}
-                    readOnly={isViewOnly}
-                    disabled={isViewOnly}
                     required
                   />
                   {fieldErrors[`question_${question.id}`] && (
@@ -406,8 +389,7 @@ export default function QuizForm({
                           name={`correct-${question.id}`}
                           checked={question.correctAnswer === optionIndex}
                           onChange={() => handleUpdateCorrectAnswer(question.id, optionIndex)}
-                          className={`${isViewOnly ? 'cursor-not-allowed' : ''}`}
-                          disabled={isViewOnly}
+                          className="text-primary"
                         />
                         <input
                           type="text"
@@ -415,12 +397,9 @@ export default function QuizForm({
                           value={option}
                           onChange={(e) => handleUpdateOption(question.id, optionIndex, e.target.value)}
                           className={cn(
-                            "flex-1 rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary disabled:cursor-default disabled:bg-gray-2 px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary dark:disabled:bg-dark",
-                            isViewOnly && "cursor-not-allowed bg-gray-50",
+                            "flex-1 rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary",
                             (fieldErrors[`options_${question.id}`] || fieldErrors[`options_unique_${question.id}`]) && "border-red-500 focus:border-red-500"
                           )}
-                          readOnly={isViewOnly}
-                          disabled={isViewOnly}
                           required
                         />
                       </div>
@@ -447,13 +426,8 @@ export default function QuizForm({
                     placeholder="Explain why this is the correct answer..."
                     value={question.explanation}
                     onChange={(e) => handleUpdateQuestion(question.id, 'explanation', e.target.value)}
-                    className={cn(
-                      "w-full rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary resize-none",
-                      isViewOnly && "cursor-not-allowed bg-gray-50 disabled:bg-gray-2 dark:disabled:bg-dark"
-                    )}
+                    className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent outline-none transition focus:border-primary px-5.5 py-3 text-dark placeholder:text-dark-6 dark:text-white dark:border-dark-3 dark:bg-dark-2 dark:focus:border-primary resize-none"
                     rows={2}
-                    readOnly={isViewOnly}
-                    disabled={isViewOnly}
                   />
                 </div>
               </div>
@@ -482,18 +456,16 @@ export default function QuizForm({
               onClick={onCancel}
               className="px-6 py-3 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition-colors"
             >
-              {isViewOnly ? 'Close' : 'Cancel'}
+              Cancel
             </button>
           )}
-          {!isViewOnly && (
-            <button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-primary disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-            >
-              {isSubmitting ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? 'Update Quiz' : 'Create')}
-            </button>
-          )}
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:from-purple-700 hover:to-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            {isSubmitting ? 'Saving Quiz...' : 'Save Generated Quiz'}
+          </button>
         </div>
       </div>
     </div>

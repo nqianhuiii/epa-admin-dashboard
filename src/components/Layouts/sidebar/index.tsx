@@ -1,6 +1,6 @@
 "use client";
 
-import { Logo } from "@/components/logo";
+// import { Logo } from "@/components/logo";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -70,8 +70,7 @@ export function Sidebar() {
               onClick={() => isMobile && toggleSidebar()}
               className="px-0 py-2.5 min-[850px]:py-0"
             >
-              <Logo />
-            </Link>
+             </Link>
 
             {isMobile && (
               <button
