@@ -158,7 +158,7 @@ export default function AIQuizGeneratorForm({
 
         console.log("📤 Sending request to generate quiz:", payload);
 
-        const response = await fetch('/api/generate-quiz', {
+        const response = await fetch('/api/generate-quiz', { 
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

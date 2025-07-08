@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Add useEffect import
 import { createStudySession, updateStudySession } from "@/app/actions/studySessionActions";
 import InputGroup from "./FormElements/InputGroup";
 import { TextAreaGroup } from "./FormElements/InputGroup/text-area";
@@ -11,11 +11,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { IonIcon } from '@ionic/react';
 import { cloudUploadOutline, closeOutline } from 'ionicons/icons';
-
-// interface ExtendedStudySessionInput extends CreateStudySessionInput {
-//   time: string;
-//   tutorImage?: File | null;
-// }
 
 interface StudySessionFormProps {
   session?: StudySession;
@@ -60,6 +55,33 @@ export default function StudySessionForm({
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+
+  // Add useEffect to set initial values when editing
+  useEffect(() => {
+    if (session) {
+      // Set the time picker value
+      if (session.time) {
+        const timeValue = getTimeValue(session.time);
+        setSelectedTime(timeValue);
+      }
+
+      // Set the image preview if there's an existing image
+      if (session.tutorImage) {
+        // If tutorImage is a URL string, use it directly
+        if (typeof session.tutorImage === 'string') {
+          setImagePreview(session.tutorImage);
+        }
+        // If tutorImage is a File object, create a preview URL
+        else if (session.tutorImage instanceof File) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setImagePreview(e.target?.result as string);
+          };
+          reader.readAsDataURL(session.tutorImage);
+        }
+      }
+    }
+  }, [session]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -280,7 +302,7 @@ export default function StudySessionForm({
                     <button
                       type="button"
                       onClick={removeImage}
-                      className="absolute -right-2 -top-2 rounded-full bg-red p-1 text-white hover:bg-red-dark shadow-lg"
+                      className="flex items-center justify-center absolute -right-2 -top-2 rounded-full bg-red w-4 h-4 text-white hover:bg-red-dark shadow-lg"
                     >
                       <IonIcon icon={closeOutline} className="size-4" />
                     </button>

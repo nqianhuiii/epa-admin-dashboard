@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "src/hooks/useAuth.js"  ],
+, "src/hooks/useAuth.js", "src/app/api/generate-quiz/route.js"  ],
   "exclude": [
     "node_modules"
   ]

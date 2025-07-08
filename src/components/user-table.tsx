@@ -35,8 +35,8 @@ export async function UserTable({users}: {users: AppUser[]}) {
             <TableRow key={item.id} className="border-[#eee] dark:border-dark-3">
               <TableCell className="xl:pl-7.5 flex min-w-fit items-center gap-3">
                 <Image
-                  // src={item.profilePicture || "/images/avatar.png"}
-                  src={ "/images/user/user-03.png"}
+                  src={item.profilePhotoUrl ||  "/images/user/user-03.png"}
+                  // src={ "/images/user/user-03.png"}
                   className="size-8 rounded-full object-cover"
                   width={40}
                   height={40}

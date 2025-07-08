@@ -5,7 +5,7 @@ export interface UserData {
   fullName: string;
   userName: string;
   email: string;
-  profilePicture?: string;
+  profilePhotoUrl?: string;
   createdAt?: string; 
   updatedAt?: string; 
 }
